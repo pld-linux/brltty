@@ -1,13 +1,13 @@
 Summary:	Braille display driver for Linux/Unix
 Summary(pl):	Sterownik do wy¶wietlaczy Braille'a
 Name:		brltty
-Version:	3.3.1 
+Version:	3.6.1
 Release:	1
 Group:		Daemons
 License:	GPL
 URL:		http://mielke.cc/brltty/
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
-# Source0-md5	b322afdc69c5661d97931f12497ca371
+# Source0-md5:	e5e2dae5f385e86795a74b58310f287f
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	bison
 BuildRequires:	glibc-devel
@@ -17,7 +17,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 BRLTTY is a background process (daemon) which provides access to the
 Linux/Unix console (when in text mode) for a blind person using a
 refreshable Braille display. It drives the Braille display, and
-provides complete screen review functionality.  Some speech capability
+provides complete screen review functionality. Some speech capability
 has also been incorporated.
 
 %description -l pl
@@ -31,7 +31,7 @@ mowy.
 %package -n brlapi
 Summary:	Application Programming Interface for BRLTTY
 Summary(pl):	API do BRLTTY
-Group: Applications/System
+Group:		Applications/System
 
 %description -n brlapi
 This package provides the run-time support for the Application
@@ -50,20 +50,20 @@ wy¶wietlacza Braille'a z od¶wie¿aniem.
 %package -n brlapi-devel
 Summary:	Headers and documentation for BrlAPI
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do BrlAPI
-Group: Development/Libraries
+Group:		Development/Libraries
 Requires:	brlapi = %{version}
 
 %description -n brlapi-devel
 This package provides the header files, shared object linker
 reference, and reference documentation for BrlAPI (the Application
-Programming Interface to BRLTTY).  It enables the implementation of
+Programming Interface to BRLTTY). It enables the implementation of
 applications which take direct advantage of a refreshable Braille
 display in order to present information in ways which are more
 appropriate for blind users and/or to provide user interfaces which
 are more specifically atuned to their needs.
 
-Install this package if you're developing or maintaining an application
-which directly accesses a refreshable Braille display.
+Install this package if you're developing or maintaining an
+application which directly accesses a refreshable Braille display.
 
 %description -n brlapi-devel -l pl
 Ten pakiet zawiera pliki nag³ówkowe oraz dokumentacjê do BrlAPI (API
@@ -77,7 +77,7 @@ korzystaj±c± bezpo¶rednio z od¶wie¿alnych wy¶wietlaczy Braille'a.
 %package -n brlapi-static
 Summary:	Static BrlAPI library
 Summary(pl):	Statyczna biblioteka BrlAPI
-Group: Development/Libraries
+Group:		Development/Libraries
 Requires:	brlapi-devel = %{version}
 
 %description -n brlapi-static
@@ -106,7 +106,7 @@ done
 %install
 rm -rf $RPM_BUILD_ROOT
 %{__make} install
-install -m 644 Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
+install Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -120,7 +120,7 @@ rm -rf $RPM_BUILD_ROOT
 
 # There's no explicit way to tell if a configuration file has been installed
 # as itself or as a .rpmnew file. The way we'll figure it out, therefore, is by
-# erasing the .rpmnew file now so that we can see if it gets created later. 
+# erasing the .rpmnew file now so that we can see if it gets created later.
 rm -f "%{_sysconfdir}/brltty.conf.rpmnew"
 
 %post
@@ -303,7 +303,7 @@ translateDevice_devfs()
 }
 translateDevice_old()
 {
-   major="${device%%/*}" 
+   major="${device%%/*}"
    if [ "${major}" != "${device}" ]
    then
       minor="${device#*/}"
