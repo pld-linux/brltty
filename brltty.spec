@@ -1,11 +1,11 @@
-Summary:	Braille display driver for Linux/Unix.
-Summary(pl):	Sterownik do wy¶wietlaczy Braille'a.
+Summary:	Braille display driver for Linux/Unix
+Summary(pl):	Sterownik do wy¶wietlaczy Braille'a
 Name:		brltty
 Version:	3.3.1 
 Release:	1
-Group:	Daemons
+Group:		Daemons
 License:	GPL
-URL:	http://mielke.cc/brltty/
+URL:		http://mielke.cc/brltty/
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 # Source0-md5	b322afdc69c5661d97931f12497ca371
 BuildRequires:	autoconf >= 2.53
@@ -16,76 +16,75 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 BRLTTY is a background process (daemon) which provides access to the
 Linux/Unix console (when in text mode) for a blind person using a
-refreshable braille display.  It drives the braille display, and
+refreshable Braille display.  It drives the Braille display, and
 provides complete screen review functionality.  Some speech capability
 has also been incorporated.
 
-Install this package if you use a refreshable braille display.
-
 %description -l pl
-BRLTTY jest demonem, który udostêpnia dostêp do linuksowej konsoli
-(w trybie tekstowym) dla niewidomych u¿ywaj±cych wy¶wietlaczy braille'a
-z od¶wie¿aniem (refreshable braille display). BRLTTY steruje wy¶wietlaczem
-braille'a i dostarcza funkcjonalno¶æ ca³kowitego przegl±du ekranu.
-Mo¿liwo¶æ syntezy mowy zosta³a w³±czona do tego pakietu.
+BRLTTY jest demonem, który udostêpnia dostêp do linuksowej konsoli (w
+trybie tekstowym) dla niewidomych u¿ywaj±cych wy¶wietlaczy Braille'a z
+od¶wie¿aniem (refreshable Braille display). BRLTTY steruje
+wy¶wietlaczem Braille'a i dostarcza funkcjonalno¶æ ca³kowitego
+przegl±du ekranu. Do tego pakietu zosta³a w³±czona mo¿liwo¶æ syntezy
+mowy.
 
 %package -n brlapi
-Summary:	Application Programming Interface for BRLTTY.
-Summary(pl):	API do BRLTTY.
+Summary:	Application Programming Interface for BRLTTY
+Summary(pl):	API do BRLTTY
 Group: Applications/System
 
 %description -n brlapi
 This package provides the run-time support for the Application
 Programming Interface to BRLTTY.
 
-Install this package if you have an application which directly accesses
-a refreshable braille display.
+Install this package if you have an application which directly
+accesses a refreshable Braille display.
 
 %description -n brlapi -l pl
-Ten pakiet zawiera ¶rodowisko uruchomieniowe dla programów korzystaj±cych
-z API BRLTTY.
+Ten pakiet zawiera ¶rodowisko uruchomieniowe dla programów
+korzystaj±cych z API BRLTTY.
 
 Zainstaluj ten pakiet je¶li masz aplikacjê, która bezpo¶rednio u¿ywa
-wy¶wietlacza braille'a z od¶wie¿aniem.
+wy¶wietlacza Braille'a z od¶wie¿aniem.
 
 %package -n brlapi-devel
-Summary:	Headers and documentation for BrlAPI.
-Summary(pl):	Pliki nag³ówkowe i dokumentacja do BrlAPI.
+Summary:	Headers and documentation for BrlAPI
+Summary(pl):	Pliki nag³ówkowe i dokumentacja do BrlAPI
 Group: Development/Libraries
 Requires:	brlapi = %{version}
 
 %description -n brlapi-devel
-This package provides the header files, shared object
-linker reference, and reference documentation for BrlAPI (the
-Application Programming Interface to BRLTTY).  It enables the
-implementation of applications which take direct advantage of a
-refreshable braille display in order to present information in ways
-which are more appropriate for blind users and/or to provide user
-interfaces which are more specifically atuned to their needs.
+This package provides the header files, shared object linker
+reference, and reference documentation for BrlAPI (the Application
+Programming Interface to BRLTTY).  It enables the implementation of
+applications which take direct advantage of a refreshable Braille
+display in order to present information in ways which are more
+appropriate for blind users and/or to provide user interfaces which
+are more specifically atuned to their needs.
 
 Install this package if you're developing or maintaining an application
-which directly accesses a refreshable braille display.
+which directly accesses a refreshable Braille display.
 
 %description -n brlapi-devel -l pl
-Ten pakiet zawiera pliki nag³ówkowe oraz dokumentacjê do BrlAPI
-(API do BRLTTY). BrlAPI pozwala implementowaæ aplikacje, które bezpo¶rednio
-korzystaj± z wy¶wietlaczy braille'a dostarczaj±c interfejs u¿ytkownika
+Ten pakiet zawiera pliki nag³ówkowe oraz dokumentacjê do BrlAPI (API
+do BRLTTY). BrlAPI pozwala implementowaæ aplikacje, które bezpo¶rednio
+korzystaj± z wy¶wietlaczy Braille'a dostarczaj±c interfejs u¿ytkownika
 bardziej przystosowany dla osób niewidomych.
 
-Zainstaluj ten pakiet, je¶li tworzysz lub nadzorujesz aplikacjê korzystaj±c±
-bezpo¶rednio z od¶wierzalnych wy¶wietlaczy braille'a.
+Zainstaluj ten pakiet, je¶li tworzysz lub nadzorujesz aplikacjê
+korzystaj±c± bezpo¶rednio z od¶wierzalnych wy¶wietlaczy Braille'a.
 
 %package -n brlapi-static
-Summary:	Static library brlapi
-Summary(pl):	Statyczna biblioteka brlapi
+Summary:	Static BrlAPI library
+Summary(pl):	Statyczna biblioteka BrlAPI
 Group: Development/Libraries
 Requires:	brlapi-devel = %{version}
 
 %description -n brlapi-static
-This is package with static brlapi libraries.
+This is package with static BrlAPI library.
 
 %description -n brlapi-static -l pl
-Statyczne biblioteki brlapi.
+Ten pakiet zawier± statyczn± wersjê biblioteki BrlAPI.
 
 %prep
 %setup -q
@@ -100,8 +99,8 @@ directory="doc"
 mkdir -p "$directory"
 for file in `find . \( -path "./$directory" -o -path ./Documents \) -prune -o \( -name 'README*' -o -name '*.txt' -o -name '*.html' -o -name '*.sgml' -o \( -path "./Bootdisks/*" -type f -perm +ugo=x \) \) -print`
 do
-   mkdir -p "$directory/${file%/*}"
-   cp -rp "$file" "$directory/$file"
+	mkdir -p "$directory/${file%/*}"
+	cp -rp "$file" "$directory/$file"
 done
 
 %install
@@ -146,7 +145,7 @@ new="${file}.rpmnew"
 #!/bin/sh
 ###############################################################################
 # BRLTTY - A background process providing access to the Linux console (when in
-#          text mode) for a blind person using a refreshable braille display.
+#          text mode) for a blind person using a refreshable Braille display.
 #
 # Copyright (C) 1995-2003 by The BRLTTY Team. All rights reserved.
 #
@@ -405,8 +404,8 @@ fi
 exit 0
 )
 
-%post -n brlapi -p /sbin/ldconfig
-%postun -n brlapi -p /sbin/ldconfig
+%post	-n brlapi -p /sbin/ldconfig
+%postun	-n brlapi -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
