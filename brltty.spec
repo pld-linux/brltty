@@ -16,7 +16,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 BRLTTY is a background process (daemon) which provides access to the
 Linux/Unix console (when in text mode) for a blind person using a
-refreshable Braille display.  It drives the Braille display, and
+refreshable Braille display. It drives the Braille display, and
 provides complete screen review functionality.  Some speech capability
 has also been incorporated.
 
@@ -72,7 +72,7 @@ korzystaj± z wy¶wietlaczy Braille'a dostarczaj±c interfejs u¿ytkownika
 bardziej przystosowany dla osób niewidomych.
 
 Zainstaluj ten pakiet, je¶li tworzysz lub nadzorujesz aplikacjê
-korzystaj±c± bezpo¶rednio z od¶wierzalnych wy¶wietlaczy Braille'a.
+korzystaj±c± bezpo¶rednio z od¶wie¿alnych wy¶wietlaczy Braille'a.
 
 %package -n brlapi-static
 Summary:	Static BrlAPI library
@@ -84,7 +84,7 @@ Requires:	brlapi-devel = %{version}
 This is package with static BrlAPI library.
 
 %description -n brlapi-static -l pl
-Ten pakiet zawier± statyczn± wersjê biblioteki BrlAPI.
+Ten pakiet zawiera statyczn± wersjê biblioteki BrlAPI.
 
 %prep
 %setup -q
