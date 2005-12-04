@@ -420,7 +420,7 @@ exit 0
 %doc Documents/Manual.sgml Documents/Manual.txt Documents/Manual-HTML
 %doc Documents/ChangeLog Documents/TODO
 %doc doc/*
-%config(noreplace) %verify(not size md5 mtime) %{_sysconfdir}/brltty.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
 
 %files -n brlapi
 %defattr(644,root,root,755)
@@ -429,7 +429,7 @@ exit 0
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
-%{_libdir}/libbrlapi.so
+%attr(755,root,root) %{_libdir}/libbrlapi.so
 %{_includedir}/brltty
 %doc %{_mandir}/man3/*
 %doc Documents/BrlAPIref-HTML
