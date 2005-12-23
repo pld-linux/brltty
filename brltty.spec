@@ -10,7 +10,6 @@ Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 # Source0-md5:	e5e2dae5f385e86795a74b58310f287f
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	bison
-BuildRequires:	glibc-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
