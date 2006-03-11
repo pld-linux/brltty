@@ -1,13 +1,13 @@
 Summary:	Braille display driver for Linux/Unix
 Summary(pl):	Sterownik do wy¶wietlaczy Braille'a
 Name:		brltty
-Version:	3.6.1
+Version:	3.7.2
 Release:	1
 Group:		Daemons
 License:	GPL
 URL:		http://mielke.cc/brltty/
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
-# Source0-md5:	e5e2dae5f385e86795a74b58310f287f
+# Source0-md5:	0ae3da8252783a4d20e1ed4e55cede5b
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	bison
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -410,10 +410,11 @@ exit 0
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-*
+%attr(755,root,root) %{_bindir}/xbrlapi
 %dir %{_libdir}/brltty
 %dir %{_sysconfdir}/brltty
 %attr(755,root,root) %{_libdir}/brltty/*.so
-%{_libdir}/brltty
+%dir %{_libdir}/brltty
 %{_sysconfdir}/brltty
 %doc %{_mandir}/man1/*
 %doc Documents/Manual.sgml Documents/Manual.txt Documents/Manual-HTML
