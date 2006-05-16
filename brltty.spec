@@ -9,6 +9,7 @@ URL:		http://mielke.cc/brltty/
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 # Source0-md5:	0ae3da8252783a4d20e1ed4e55cede5b
 BuildRequires:	autoconf >= 2.53
+BuildRequires:	automake
 BuildRequires:	bison
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -50,7 +51,7 @@ wy¶wietlacza Braille'a z od¶wie¿aniem.
 Summary:	Headers and documentation for BrlAPI
 Summary(pl):	Pliki nag³ówkowe i dokumentacja do BrlAPI
 Group:		Development/Libraries
-Requires:	brlapi = %{version}
+Requires:	brlapi = %{version}-%{release}
 
 %description -n brlapi-devel
 This package provides the header files, shared object linker
@@ -77,7 +78,7 @@ korzystaj±c± bezpo¶rednio z od¶wie¿alnych wy¶wietlaczy Braille'a.
 Summary:	Static BrlAPI library
 Summary(pl):	Statyczna biblioteka BrlAPI
 Group:		Development/Libraries
-Requires:	brlapi-devel = %{version}
+Requires:	brlapi-devel = %{version}-%{release}
 
 %description -n brlapi-static
 This is package with static BrlAPI library.
@@ -91,7 +92,7 @@ Ten pakiet zawiera statyczn± wersjê biblioteki BrlAPI.
 %build
 %{__aclocal}
 %{__autoconf}
-cp -f /usr/share/automake/config.sub acdir/
+cp -f /usr/share/automake/config.sub acdir
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	--disable-tainted-components \
@@ -412,6 +413,7 @@ exit 0
 
 %files
 %defattr(644,root,root,755)
+%doc Documents/{Manual.sgml,Manual.txt,Manual-HTML,ChangeLog,TODO} doc/*
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-*
 %attr(755,root,root) %{_bindir}/xbrlapi
@@ -420,11 +422,8 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/*.so
 %dir %{_libdir}/brltty
 %{_sysconfdir}/brltty
-%doc %{_mandir}/man1/*
-%doc Documents/Manual.sgml Documents/Manual.txt Documents/Manual-HTML
-%doc Documents/ChangeLog Documents/TODO
-%doc doc/*
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
+%{_mandir}/man1/*
 
 %files -n brlapi
 %defattr(644,root,root,755)
@@ -433,11 +432,10 @@ exit 0
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
+%doc Documents/BrlAPIref-HTML Documents/README.Gnopernicus
 %attr(755,root,root) %{_libdir}/libbrlapi.so
 %{_includedir}/brltty
-%doc %{_mandir}/man3/*
-%doc Documents/BrlAPIref-HTML
-%doc Documents/README.Gnopernicus
+%{_mandir}/man3/*
 
 %files -n brlapi-static
 %defattr(644,root,root,755)
