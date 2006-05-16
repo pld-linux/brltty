@@ -91,6 +91,7 @@ Ten pakiet zawiera statyczn± wersjê biblioteki BrlAPI.
 %build
 %{__aclocal}
 %{__autoconf}
+cp -f /usr/share/automake/config.sub acdir/
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	--disable-tainted-components \
