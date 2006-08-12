@@ -253,7 +253,7 @@ ${1}"
 	}
 	startConfigurationFile()
 	{
-		if [ -n "${configurationFile}" ] then
+		if [ -n "${configurationFile}" ]; then
 			[ -e "${configurationFile}" ] || syntaxError "file not found: ${configurationFile}"
 			[ -f "${configurationFile}" ] || syntaxError "not a file: ${configurationFile}"
 			[ -r "${configurationFile}" ] || syntaxError "file not readable: ${configurationFile}"
@@ -289,12 +289,12 @@ translateDevice_none()
 translateDevice_devfs()
 {
 	minor="${device#ttyS}"
-	if [ "${minor}" != "${device}" ] then
+	if [ "${minor}" != "${device}" ]; then
 		device="tts/${minor}"
 		return 0
 	fi
 	minor="${device#lp}"
-	if [ "${minor}" != "${device}" ] then
+	if [ "${minor}" != "${device}" ]; then
 		device="printers/${minor}"
 		return 0
 	fi
@@ -303,14 +303,14 @@ translateDevice_devfs()
 translateDevice_old()
 {
 	major="${device%%/*}"
-	if [ "${major}" != "${device}" ] then
+	if [ "${major}" != "${device}" ]; then
 		minor="${device#*/}"
 		case "${major}" in
 		    tts) devfs="ttyS${minor}";;
 		    printers) devfs="lp${minor}";;
 		esac
 	fi
-	if [ -n "${devfs}" ] then
+	if [ -n "${devfs}" ]; then
 		device="${devfs}"
 	else
 		programMessage "unsupported devfs device: ${device}"
@@ -331,7 +331,7 @@ putConfigurationFile()
 	[ -n "${brailleDriver}" ] && putConfigurationDirective "braille-driver" "${brailleDriver}"
 	[ -n "${brailleDevice}" ] && {
 	device="`echo "${brailleDevice}" | sed -e 's%//*%/%g' -e 's%^/dev/%%'`"
-	if [ "${device#/}" = "${device}" ] then
+	if [ "${device#/}" = "${device}" ]; then
 		translateDevice_${deviceTranslation}
 	fi
 	putConfigurationDirective "braille-device" "${device}"
@@ -343,11 +343,11 @@ parseBootParameter()
 {
 	bootParameter="${bootParameter} ${1}"
 	number=1
-	while [ "${number}" -le 3 ] do
+	while [ "${number}" -le 3 ]; do
 		cut="cut -d, -f${number}"
 		[ "${number}" -gt 1 ] && cut="${cut} -s"
 		operand="`echo ${1} | ${cut}`"
-		if [ -n "${operand}" ] then
+		if [ -n "${operand}" ]; then
 			case "${number}" in
 			    1) brailleDriver="${operand}";;
 			    2) brailleDevice="${operand}";;
@@ -365,7 +365,7 @@ putBootParameter()
 parseBootCommand()
 {
 	found=false
-	while [ "${#}" -gt 0 ] do
+	while [ "${#}" -gt 0 ]; do
 		case "${1}" in
 		    "brltty="*)
 			found=true
@@ -381,11 +381,11 @@ brailleDriver=""
 brailleDevice=""
 textTable=""
 bootCommandFile="/proc/cmdline"
-if [ -n "${requestedParameter}" ] then
+if [ -n "${requestedParameter}" ]; then
 	putBootParameter "${requestedParameter}"
-elif [ -f "${bootCommandFile}" ] then
+elif [ -f "${bootCommandFile}" ]; then
 	parseBootCommand `cat "${bootCommandFile}"`
-elif [ -n "${brltty}" ] then
+elif [ -n "${brltty}" ]; then
 	putBootParameter "${brltty}"
 fi
 exit 0
