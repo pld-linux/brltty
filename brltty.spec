@@ -143,8 +143,8 @@ new="${file}.rpmnew"
 # Include it right within this scriptlet so that it needn't be installed.
 # Imbed it within a subshell to ensure that it won't impact this scriptlet.
 (
-   # First, set bp2cf's command line arguments.
-   set -- -u -f "${file}"
+	# First, set bp2cf's command line arguments.
+	set -- -u -f "${file}"
 
 #!/bin/sh
 ###############################################################################
@@ -172,17 +172,17 @@ new="${file}.rpmnew"
 programName="${0##*/}"
 programMessage()
 {
-   echo 2>&1 "${programName}: ${1}"
+	echo 2>&1 "${programName}: ${1}"
 }
 syntaxError()
 {
-   programMessage "${1}"
-   exit 2
+	programMessage "${1}"
+	exit 2
 }
 internalError()
 {
-   programMessage "${1}"
-   exit 3
+	programMessage "${1}"
+	exit 3
 }
 
 configurationFile=""
@@ -192,17 +192,16 @@ requestedParameter=""
 OPTIND=1
 while getopts ":f:cundop:h" option
 do
-   case "${option}"
-   in
-      f) configurationFile="${OPTARG}";;
-      c) requestedAction=create;;
-      u) requestedAction=update;;
-      n) deviceTranslation=none;;
-      d) deviceTranslation=devfs;;
-      o) deviceTranslation=old;;
-      p) requestedParameter="${OPTARG}";;
-      h)
-         cat <<EOF
+	case "${option}" in
+	    f) configurationFile="${OPTARG}";;
+	    c) requestedAction=create;;
+	    u) requestedAction=update;;
+	    n) deviceTranslation=none;;
+	    d) deviceTranslation=devfs;;
+	    o) deviceTranslation=old;;
+	    p) requestedParameter="${OPTARG}";;
+	    h)
+		cat <<EOF
 Usage: ${programName} [option ...]
 -f file  The configuration file to create/update.
 -c       Create the configuration file (write to stdout if no -f).
@@ -214,196 +213,180 @@ Usage: ${programName} [option ...]
          Explicitly specify the boot parameter.
 -h       Display this usage summary.
 EOF
-         exit 0
-         ;;
-     \?) syntaxError "unknown option: -${OPTARG}";;
-      :) syntaxError "missing value: -${OPTARG}";;
-      *) internalError "unimplemented option: -${option}";;
-   esac
+		exit 0
+		;;
+	    \?) syntaxError "unknown option: -${OPTARG}";;
+	    :) syntaxError "missing value: -${OPTARG}";;
+	    *) internalError "unimplemented option: -${option}";;
+	esac
 done
 shift "`expr $OPTIND - 1`"
 [ "${#}" -eq 0 ] || syntaxError "too many parameters."
 
-case "${requestedAction}"
-in
-   create)
-      putConfigurationLine()
-      {
-         echo "${1}" || exit 4
-      }
-      startConfigurationFile()
-      {
-         [ -n "${configurationFile}" ] && exec >"${configurationFile}"
-         putConfigurationLine "`makeHeaderLine Created`"
-         putConfigurationLine "`makeParameterLine`"
-         putConfigurationLine ""
-      }
-      putConfigurationDirective()
-      {
-         putConfigurationLine "${1} ${2}"
-      }
-      finalizeConfigurationFile()
-      {
-         :
-      }
-      ;;
-   update)
-      putSedCommand()
-      {
-         sedScript="${sedScript}
+case "${requestedAction}" in
+    create)
+	putConfigurationLine()
+	{
+		echo "${1}" || exit 4
+	}
+	startConfigurationFile()
+	{
+		[ -n "${configurationFile}" ] && exec >"${configurationFile}"
+		putConfigurationLine "`makeHeaderLine Created`"
+		putConfigurationLine "`makeParameterLine`"
+		putConfigurationLine ""
+	}
+	putConfigurationDirective()
+	{
+		putConfigurationLine "${1} ${2}"
+	}
+	finalizeConfigurationFile()
+	{
+		:
+	}
+	;;
+    update)
+	putSedCommand()
+	{
+		sedScript="${sedScript}
 ${1}"
-      }
-      startConfigurationFile()
-      {
-         if [ -n "${configurationFile}" ]
-         then
-            [ -e "${configurationFile}" ] || syntaxError "file not found: ${configurationFile}"
-            [ -f "${configurationFile}" ] || syntaxError "not a file: ${configurationFile}"
-            [ -r "${configurationFile}" ] || syntaxError "file not readable: ${configurationFile}"
-            [ -w "${configurationFile}" ] || syntaxError "file not writable: ${configurationFile}"
-            outputFile="${configurationFile}.new"
-            exec <"${configurationFile}" >"${outputFile}"
-         fi
-         sedScript=""
-         putSedCommand "1i\\
+	}
+	startConfigurationFile()
+	{
+		if [ -n "${configurationFile}" ] then
+			[ -e "${configurationFile}" ] || syntaxError "file not found: ${configurationFile}"
+			[ -f "${configurationFile}" ] || syntaxError "not a file: ${configurationFile}"
+			[ -r "${configurationFile}" ] || syntaxError "file not readable: ${configurationFile}"
+			[ -w "${configurationFile}" ] || syntaxError "file not writable: ${configurationFile}"
+			outputFile="${configurationFile}.new"
+			exec <"${configurationFile}" >"${outputFile}"
+		fi
+		sedScript=""
+		putSedCommand "1i\\
 `makeHeaderLine Updated`\\
 `makeParameterLine`\\
 "
-      }
-      putConfigurationDirective()
-      {
-         value="`echo "${2}" | sed -e 's%\\([/\\]\\)%\\\\\\1%g'`"
-         putSedCommand "/^ *#\\(${1} .*\\)/s//\\1/"
-         putSedCommand "/^ *\\(${1}\\) .*/s//\\1 ${value}/"
-      }
-      finalizeConfigurationFile()
-      {
-         sed -e "${sedScript}"
-         [ -n "${outputFile}" ] && mv -f "${outputFile}" "${configurationFile}"
-      }
-      ;;
-   *) internalError "unimplemented action: ${requestedAction}";;
+	}
+	putConfigurationDirective()
+	{
+		value="`echo "${2}" | sed -e 's%\\([/\\]\\)%\\\\\\1%g'`"
+		putSedCommand "/^ *#\\(${1} .*\\)/s//\\1/"
+		putSedCommand "/^ *\\(${1}\\) .*/s//\\1 ${value}/"
+	}
+	finalizeConfigurationFile()
+	{
+		sed -e "${sedScript}"
+		[ -n "${outputFile}" ] && mv -f "${outputFile}" "${configurationFile}"
+	}
+	;;
+    *) internalError "unimplemented action: ${requestedAction}";;
 esac
 
 translateDevice_none()
 {
-   :
+	:
 }
 translateDevice_devfs()
 {
-   minor="${device#ttyS}"
-   if [ "${minor}" != "${device}" ]
-   then
-      device="tts/${minor}"
-      return 0
-   fi
-   minor="${device#lp}"
-   if [ "${minor}" != "${device}" ]
-   then
-      device="printers/${minor}"
-      return 0
-   fi
-   programMessage "unsupported old-style device: ${device}"
+	minor="${device#ttyS}"
+	if [ "${minor}" != "${device}" ] then
+		device="tts/${minor}"
+		return 0
+	fi
+	minor="${device#lp}"
+	if [ "${minor}" != "${device}" ] then
+		device="printers/${minor}"
+		return 0
+	fi
+	programMessage "unsupported old-style device: ${device}"
 }
 translateDevice_old()
 {
-   major="${device%%/*}"
-   if [ "${major}" != "${device}" ]
-   then
-      minor="${device#*/}"
-      case "${major}"
-      in
-         tts) devfs="ttyS${minor}";;
-         printers) devfs="lp${minor}";;
-      esac
-   fi
-   if [ -n "${devfs}" ]
-   then
-      device="${devfs}"
-   else
-      programMessage "unsupported devfs device: ${device}"
-   fi
+	major="${device%%/*}"
+	if [ "${major}" != "${device}" ] then
+		minor="${device#*/}"
+		case "${major}" in
+		    tts) devfs="ttyS${minor}";;
+		    printers) devfs="lp${minor}";;
+		esac
+	fi
+	if [ -n "${devfs}" ] then
+		device="${devfs}"
+	else
+		programMessage "unsupported devfs device: ${device}"
+	fi
 }
 
 makeHeaderLine()
 {
-   echo "# ${1} by brltty-bp2cf`date +' on %Y-%m-%d at %H:%M:%S %Z (UTC%z)'`."
+	echo "# ${1} by brltty-bp2cf`date +' on %Y-%m-%d at %H:%M:%S %Z (UTC%z)'`."
 }
 makeParameterLine()
 {
-   echo "# Boot Parameter:${bootParameter}"
+	echo "# Boot Parameter:${bootParameter}"
 }
 putConfigurationFile()
 {
-   startConfigurationFile
-   [ -n "${brailleDriver}" ] && putConfigurationDirective "braille-driver" "${brailleDriver}"
-   [ -n "${brailleDevice}" ] && {
-      device="`echo "${brailleDevice}" | sed -e 's%//*%/%g' -e 's%^/dev/%%'`"
-      if [ "${device#/}" = "${device}" ]
-      then
-         translateDevice_${deviceTranslation}
-      fi
-      putConfigurationDirective "braille-device" "${device}"
-   }
-   [ -n "${textTable}" ] && putConfigurationDirective "text-table" "${textTable}"
-   finalizeConfigurationFile
+	startConfigurationFile
+	[ -n "${brailleDriver}" ] && putConfigurationDirective "braille-driver" "${brailleDriver}"
+	[ -n "${brailleDevice}" ] && {
+	device="`echo "${brailleDevice}" | sed -e 's%//*%/%g' -e 's%^/dev/%%'`"
+	if [ "${device#/}" = "${device}" ] then
+		translateDevice_${deviceTranslation}
+	fi
+	putConfigurationDirective "braille-device" "${device}"
+	}
+	[ -n "${textTable}" ] && putConfigurationDirective "text-table" "${textTable}"
+	finalizeConfigurationFile
 }
 parseBootParameter()
 {
-   bootParameter="${bootParameter} ${1}"
-   number=1
-   while [ "${number}" -le 3 ]
-   do
-      cut="cut -d, -f${number}"
-      [ "${number}" -gt 1 ] && cut="${cut} -s"
-      operand="`echo ${1} | ${cut}`"
-      if [ -n "${operand}" ]
-      then
-         case "${number}"
-         in
-            1) brailleDriver="${operand}";;
-            2) brailleDevice="${operand}";;
-            3) textTable="${operand}";;
-         esac
-      fi
-      number="`expr ${number} + 1`"
-   done
+	bootParameter="${bootParameter} ${1}"
+	number=1
+	while [ "${number}" -le 3 ] do
+		cut="cut -d, -f${number}"
+		[ "${number}" -gt 1 ] && cut="${cut} -s"
+		operand="`echo ${1} | ${cut}`"
+		if [ -n "${operand}" ] then
+			case "${number}" in
+			    1) brailleDriver="${operand}";;
+			    2) brailleDevice="${operand}";;
+			    3) textTable="${operand}";;
+			esac
+		fi
+		number="`expr ${number} + 1`"
+	done
 }
 putBootParameter()
 {
-   parseBootParameter "${1}"
-   putConfigurationFile
+	parseBootParameter "${1}"
+	putConfigurationFile
 }
 parseBootCommand()
 {
-   found=false
-   while [ "${#}" -gt 0 ]
-   do
-      case "${1}"
-      in
-         "brltty="*)
-            found=true
-            parseBootParameter "${1#*=}"
-            ;;
-      esac
-      shift
-   done
-   "${found}" && putConfigurationFile
+	found=false
+	while [ "${#}" -gt 0 ] do
+		case "${1}" in
+		    "brltty="*)
+			found=true
+			parseBootParameter "${1#*=}"
+			;;
+		esac
+		shift
+	done
+	"${found}" && putConfigurationFile
 }
 
 brailleDriver=""
 brailleDevice=""
 textTable=""
 bootCommandFile="/proc/cmdline"
-if [ -n "${requestedParameter}" ]
-then
-   putBootParameter "${requestedParameter}"
-elif [ -f "${bootCommandFile}" ]
-then
-   parseBootCommand `cat "${bootCommandFile}"`
-elif [ -n "${brltty}" ]
-then
-   putBootParameter "${brltty}"
+if [ -n "${requestedParameter}" ] then
+	putBootParameter "${requestedParameter}"
+elif [ -f "${bootCommandFile}" ] then
+	parseBootCommand `cat "${bootCommandFile}"`
+elif [ -n "${brltty}" ] then
+	putBootParameter "${brltty}"
 fi
 exit 0
 )
