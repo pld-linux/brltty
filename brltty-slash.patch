@@ -1,0 +1,11 @@
+--- brltty-3.7.2/prologue.mk.in~	2005-12-26 13:58:08.000000000 +0100
++++ brltty-3.7.2/prologue.mk.in	2007-01-16 03:02:16.000000000 +0100
+@@ -19,7 +19,7 @@
+ SRC_DIR = @srcdir@
+ # VPATH = @srcdir@
+ 
+-BLD_TOP = @top_builddir@
++BLD_TOP = @top_builddir@/
+ BLD_DIR = @builddir@
+ 
+ O = @OBJEXT@
