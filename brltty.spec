@@ -1,5 +1,5 @@
 Summary:	Braille display driver for Linux/Unix
-Summary(pl):	Sterownik do wy¶wietlaczy Braille'a
+Summary(pl.UTF-8):   Sterownik do wyÅ›wietlaczy Braille'a
 Name:		brltty
 Version:	3.7.2
 Release:	4
@@ -21,17 +21,17 @@ refreshable Braille display. It drives the Braille display, and
 provides complete screen review functionality. Some speech capability
 has also been incorporated.
 
-%description -l pl
-BRLTTY jest demonem, który udostêpnia dostêp do linuksowej konsoli (w
-trybie tekstowym) dla niewidomych u¿ywaj±cych wy¶wietlaczy Braille'a z
-od¶wie¿aniem (refreshable Braille display). BRLTTY steruje
-wy¶wietlaczem Braille'a i dostarcza funkcjonalno¶æ ca³kowitego
-przegl±du ekranu. Do tego pakietu zosta³a w³±czona mo¿liwo¶æ syntezy
+%description -l pl.UTF-8
+BRLTTY jest demonem, ktÃ³ry udostÄ™pnia dostÄ™p do linuksowej konsoli (w
+trybie tekstowym) dla niewidomych uÅ¼ywajÄ…cych wyÅ›wietlaczy Braille'a z
+odÅ›wieÅ¼aniem (refreshable Braille display). BRLTTY steruje
+wyÅ›wietlaczem Braille'a i dostarcza funkcjonalnoÅ›Ä‡ caÅ‚kowitego
+przeglÄ…du ekranu. Do tego pakietu zostaÅ‚a wÅ‚Ä…czona moÅ¼liwoÅ›Ä‡ syntezy
 mowy.
 
 %package -n brlapi
 Summary:	Application Programming Interface for BRLTTY
-Summary(pl):	API do BRLTTY
+Summary(pl.UTF-8):   API do BRLTTY
 Group:		Applications/System
 
 %description -n brlapi
@@ -41,16 +41,16 @@ Programming Interface to BRLTTY.
 Install this package if you have an application which directly
 accesses a refreshable Braille display.
 
-%description -n brlapi -l pl
-Ten pakiet zawiera ¶rodowisko uruchomieniowe dla programów
-korzystaj±cych z API BRLTTY.
+%description -n brlapi -l pl.UTF-8
+Ten pakiet zawiera Å›rodowisko uruchomieniowe dla programÃ³w
+korzystajÄ…cych z API BRLTTY.
 
-Zainstaluj ten pakiet je¶li masz aplikacjê, która bezpo¶rednio u¿ywa
-wy¶wietlacza Braille'a z od¶wie¿aniem.
+Zainstaluj ten pakiet jeÅ›li masz aplikacjÄ™, ktÃ³ra bezpoÅ›rednio uÅ¼ywa
+wyÅ›wietlacza Braille'a z odÅ›wieÅ¼aniem.
 
 %package -n brlapi-devel
 Summary:	Headers and documentation for BrlAPI
-Summary(pl):	Pliki nag³ówkowe i dokumentacja do BrlAPI
+Summary(pl.UTF-8):   Pliki nagÅ‚Ã³wkowe i dokumentacja do BrlAPI
 Group:		Development/Libraries
 Requires:	brlapi = %{version}-%{release}
 
@@ -66,26 +66,26 @@ are more specifically atuned to their needs.
 Install this package if you're developing or maintaining an
 application which directly accesses a refreshable Braille display.
 
-%description -n brlapi-devel -l pl
-Ten pakiet zawiera pliki nag³ówkowe oraz dokumentacjê do BrlAPI (API
-do BRLTTY). BrlAPI pozwala implementowaæ aplikacje, które bezpo¶rednio
-korzystaj± z wy¶wietlaczy Braille'a dostarczaj±c interfejs u¿ytkownika
-bardziej przystosowany dla osób niewidomych.
+%description -n brlapi-devel -l pl.UTF-8
+Ten pakiet zawiera pliki nagÅ‚Ã³wkowe oraz dokumentacjÄ™ do BrlAPI (API
+do BRLTTY). BrlAPI pozwala implementowaÄ‡ aplikacje, ktÃ³re bezpoÅ›rednio
+korzystajÄ… z wyÅ›wietlaczy Braille'a dostarczajÄ…c interfejs uÅ¼ytkownika
+bardziej przystosowany dla osÃ³b niewidomych.
 
-Zainstaluj ten pakiet, je¶li tworzysz lub nadzorujesz aplikacjê
-korzystaj±c± bezpo¶rednio z od¶wie¿alnych wy¶wietlaczy Braille'a.
+Zainstaluj ten pakiet, jeÅ›li tworzysz lub nadzorujesz aplikacjÄ™
+korzystajÄ…cÄ… bezpoÅ›rednio z odÅ›wieÅ¼alnych wyÅ›wietlaczy Braille'a.
 
 %package -n brlapi-static
 Summary:	Static BrlAPI library
-Summary(pl):	Statyczna biblioteka BrlAPI
+Summary(pl.UTF-8):   Statyczna biblioteka BrlAPI
 Group:		Development/Libraries
 Requires:	brlapi-devel = %{version}-%{release}
 
 %description -n brlapi-static
 This is package with static BrlAPI library.
 
-%description -n brlapi-static -l pl
-Ten pakiet zawiera statyczn± wersjê biblioteki BrlAPI.
+%description -n brlapi-static -l pl.UTF-8
+Ten pakiet zawiera statycznÄ… wersjÄ™ biblioteki BrlAPI.
 
 %prep
 %setup -q
