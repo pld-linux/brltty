@@ -1,5 +1,5 @@
 Summary:	Braille display driver for Linux/Unix
-Summary(pl.UTF-8):   Sterownik do wyświetlaczy Braille'a
+Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	3.7.2
 Release:	4
@@ -31,7 +31,7 @@ mowy.
 
 %package -n brlapi
 Summary:	Application Programming Interface for BRLTTY
-Summary(pl.UTF-8):   API do BRLTTY
+Summary(pl.UTF-8):	API do BRLTTY
 Group:		Applications/System
 
 %description -n brlapi
@@ -50,7 +50,7 @@ wyświetlacza Braille'a z odświeżaniem.
 
 %package -n brlapi-devel
 Summary:	Headers and documentation for BrlAPI
-Summary(pl.UTF-8):   Pliki nagłówkowe i dokumentacja do BrlAPI
+Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do BrlAPI
 Group:		Development/Libraries
 Requires:	brlapi = %{version}-%{release}
 
@@ -77,7 +77,7 @@ korzystającą bezpośrednio z odświeżalnych wyświetlaczy Braille'a.
 
 %package -n brlapi-static
 Summary:	Static BrlAPI library
-Summary(pl.UTF-8):   Statyczna biblioteka BrlAPI
+Summary(pl.UTF-8):	Statyczna biblioteka BrlAPI
 Group:		Development/Libraries
 Requires:	brlapi-devel = %{version}-%{release}
 
