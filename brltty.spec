@@ -1,14 +1,13 @@
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	3.7.2
-Release:	4
+Version:	3.9
+Release:	1
 Group:		Daemons
 License:	GPL
 URL:		http://mielke.cc/brltty/
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
-# Source0-md5:	0ae3da8252783a4d20e1ed4e55cede5b
-Patch0:		%{name}-slash.patch
+# Source0-md5:	7ce54ba2d38b7c220870e8c781f36743
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
 BuildRequires:	bison
@@ -89,7 +88,6 @@ Ten pakiet zawiera statyczną wersję biblioteki BrlAPI.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 %{__aclocal}
@@ -398,14 +396,13 @@ exit 0
 
 %files
 %defattr(644,root,root,755)
-%doc Documents/{Manual.sgml,Manual.txt,Manual-HTML,ChangeLog,TODO} doc/*
+%doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO} doc/*
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-*
+%attr(755,root,root) %{_bindir}/vstp
 %attr(755,root,root) %{_bindir}/xbrlapi
 %dir %{_libdir}/brltty
-%dir %{_sysconfdir}/brltty
 %attr(755,root,root) %{_libdir}/brltty/*.so
-%dir %{_libdir}/brltty
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
 %{_mandir}/man1/*
@@ -413,13 +410,14 @@ exit 0
 %files -n brlapi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libbrlapi.so.*
-%doc Documents/BrlAPI.sgml Documents/BrlAPI.txt Documents/BrlAPI-HTML
+%doc Documents/Manual-BrlAPI/English/BrlAPI*
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
-%doc Documents/BrlAPIref-HTML Documents/README.Gnopernicus
+%doc Documents/BrlAPIref Documents/README.Gnopernicus
 %attr(755,root,root) %{_libdir}/libbrlapi.so
 %{_includedir}/brltty
+%{_includedir}/brlapi*.h
 %{_mandir}/man3/*
 
 %files -n brlapi-static
