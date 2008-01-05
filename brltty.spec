@@ -1,4 +1,5 @@
 # TODO:
+#	- what is that huge %post script?
 #	- ocaml bcond is useless now:
 #		Cannot find ocamlfind.
 #		BrlAPI Caml bindings will be compiled but not installed.
@@ -493,6 +494,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybfl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybil.so
@@ -525,9 +527,8 @@ exit 0
 
 %files -n brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5
 %attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.1
-%dir %{_libdir}/brlapi-0.5.1
+%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.5
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
@@ -565,6 +566,7 @@ exit 0
 %if %{with tcl}
 %files -n brlapi-tcl
 %defattr(644,root,root,755)
+%dir %{_libdir}/brlapi-0.5.1
 %attr(755,root,root) %{_libdir}/brlapi-0.5.1/libbrlapi_tcl.so
 %{_libdir}/brlapi-0.5.1/pkgIndex.tcl
 %endif
