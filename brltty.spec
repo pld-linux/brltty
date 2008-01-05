@@ -2,6 +2,9 @@
 #	- check BR
 #	- more packages (bindings)
 #
+# Conditional build:
+%bcond_without	apidocs		# documentation generated with doxygen
+#
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
@@ -16,7 +19,7 @@ BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
 BuildRequires:	bison
 #BuildRequires:	bluez-devel
-#BuildRequires:	doxygen
+%{?with_apidocs:BuildRequires:	doxygen}
 #BuildRequires:	libtool
 #BuildRequires:	gpm-devel
 #BuildRequires:	java-?
@@ -101,6 +104,19 @@ This is package with static BrlAPI library.
 
 %description -n brlapi-static -l pl.UTF-8
 Ten pakiet zawiera statyczną wersję biblioteki BrlAPI.
+
+%package -n brlapi-apidocs
+Summary:	BrlAPI documentation
+Summary(pl.UTF-8):	Documentacja BrlAPI
+Group:		Documentation
+
+%description -n brlapi-apidocs
+Documentation for BrlAPI in HTML format generated from brltty
+sources by doxygen.
+
+%description -n brlapi-apidocs -l pl.UTF-8
+Dokumentacja BrlAPI w formacie HTML generowane ze
+źrodeł brltty przez doxygen.
 
 %prep
 %setup -q
@@ -462,11 +478,11 @@ exit 0
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libbrlapi.so.0.5
 %attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.1
-%doc Documents/Manual-BrlAPI/English/BrlAPI*
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
-%doc Documents/BrlAPIref Documents/README.Gnopernicus
+%doc Documents/README.Gnopernicus
+%doc Documents/Manual-BrlAPI/English/BrlAPI*
 %attr(755,root,root) %{_libdir}/libbrlapi.so
 %{_includedir}/brltty
 %{_includedir}/brlapi*.h
@@ -475,3 +491,7 @@ exit 0
 %files -n brlapi-static
 %defattr(644,root,root,755)
 %{_libdir}/libbrlapi.a
+
+%files -n brlapi-apidocs
+%defattr(644,root,root,755)
+%doc Documents/BrlAPIref/html/*
