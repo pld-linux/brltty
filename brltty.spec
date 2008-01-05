@@ -20,9 +20,9 @@ Version:	3.9
 Release:	1
 Group:		Daemons
 License:	GPL
-URL:		http://mielke.cc/brltty/
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 # Source0-md5:	7ce54ba2d38b7c220870e8c781f36743
+URL:		http://mielke.cc/brltty/
 BuildRequires:	at-spi-devel
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
