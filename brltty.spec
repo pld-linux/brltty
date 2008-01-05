@@ -1,10 +1,9 @@
 # TODO:
-#	- check BR
-#	- more packages (bindings)
 #	- ocaml bcond is useless now:
 #		Cannot find ocamlfind.
 #		BrlAPI Caml bindings will be compiled but not installed.
 #	- check java stuff
+#	- create bcond to build with minimal deps (wo ncurses,gpm,at-spi*)
 #
 # Conditional build:
 %bcond_without	apidocs		# documentation generated with doxygen
@@ -24,6 +23,7 @@ License:	GPL
 URL:		http://mielke.cc/brltty/
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 # Source0-md5:	7ce54ba2d38b7c220870e8c781f36743
+BuildRequires:	at-spi-devel
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
 BuildRequires:	bison
@@ -33,7 +33,7 @@ BuildRequires:	gpm-devel
 %{?with_java:BuildRequires:	jdk}
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
-#BuildRequires:	pkgconfig
+BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-Pyrex}
 %{?with_python:BuildRequires:	rpm-pythonprov}
 %{?with_tcl:BuildRequires:	tcl}
@@ -514,6 +514,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysgs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxlx.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
 %{_sysconfdir}/brltty
