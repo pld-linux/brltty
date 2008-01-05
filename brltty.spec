@@ -412,20 +412,56 @@ exit 0
 
 %files
 %defattr(644,root,root,755)
-%doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO} doc/*
+%doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO}
+%doc doc/{Bindings,Bootdisks,BrailleDrivers,BrailleTables,ContractionTables,Patches,README,SpeechDrivers}
 %attr(755,root,root) %{_bindir}/brltty
-%attr(755,root,root) %{_bindir}/brltty-*
+%attr(755,root,root) %{_bindir}/brltty-install
+%attr(755,root,root) %{_bindir}/brltty-config
 %attr(755,root,root) %{_bindir}/vstp
-%attr(755,root,root) %{_bindir}/xbrlapi
+#attr(755,root,root) %{_bindir}/xbrlapi
 %dir %{_libdir}/brltty
-%attr(755,root,root) %{_libdir}/brltty/*.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybal.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybat.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybba.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybbd.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybbl.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybbm.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybbn.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybil.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyblt.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybmb.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybmd.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybmn.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybpm.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybtn.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybts.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybtt.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybvd.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybvo.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybvr.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybvs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttysal.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttysbl.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyscb.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttysgs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyxlx.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
-%{_mandir}/man1/*
+%{_mandir}/man1/brltty.1*
+%{_mandir}/man1/vstp.1*
 
 %files -n brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libbrlapi.so.*
+%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5
+%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.1
 %doc Documents/Manual-BrlAPI/English/BrlAPI*
 
 %files -n brlapi-devel
