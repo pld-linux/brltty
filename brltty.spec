@@ -12,6 +12,7 @@
 %bcond_with	ocaml		# ocaml bindings (NFY)
 %bcond_without	python		# python bindings
 %bcond_without	tcl		# tcl bindings
+%bcond_without	x		# build X11-based utilities
 #
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
@@ -31,13 +32,14 @@ BuildRequires:	bison
 #BuildRequires:	gpm-devel
 %{?with_java:BuildRequires:	jdk}
 #BuildRequires:	libusb-devel
-#BuildRequires:	ncurses-devel
+BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 #BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-Pyrex}
 %{?with_python:BuildRequires:	rpm-pythonprov}
 %{?with_tcl:BuildRequires:	tcl}
-#BuildRequires:	xorg-lib-libX*
+%{?with_x:BuildRequires:	xorg-lib-libXaw-devel}
+%{?with_x:BuildRequires:	xorg-lib-libXtst-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -169,6 +171,7 @@ Biblioteka BrlAPI dla Tcl.
 %{__aclocal}
 %{__autoconf}
 cp -f /usr/share/automake/config.sub acdir
+CFLAGS="-I/usr/include/ncurses"
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	--disable-tainted-components \
@@ -478,7 +481,7 @@ exit 0
 %attr(755,root,root) %{_bindir}/brltty-install
 %attr(755,root,root) %{_bindir}/brltty-config
 %attr(755,root,root) %{_bindir}/vstp
-#attr(755,root,root) %{_bindir}/xbrlapi
+%{?with_x:%attr(755,root,root) %{_bindir}/xbrlapi}
 %dir %{_libdir}/brltty
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybal.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybat.so
@@ -505,6 +508,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybvo.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybvr.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybvs.so
+%{?with_x:%attr(755,root,root) %{_libdir}/brltty/libbrlttybxw.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysal.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyscb.so
