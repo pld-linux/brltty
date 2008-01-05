@@ -1,9 +1,13 @@
 # TODO:
 #	- check BR
 #	- more packages (bindings)
+#	- ocaml bcond is useless now:
+#		Cannot find ocamlfind.
+#		BrlAPI Caml bindings will be compiled but not installed.
 #
 # Conditional build:
 %bcond_without	apidocs		# documentation generated with doxygen
+%bcond_with	ocaml		# ocaml bindings (NFY)
 #
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
@@ -20,12 +24,11 @@ BuildRequires:	automake
 BuildRequires:	bison
 #BuildRequires:	bluez-devel
 %{?with_apidocs:BuildRequires:	doxygen}
-#BuildRequires:	libtool
 #BuildRequires:	gpm-devel
 #BuildRequires:	java-?
 #BuildRequires:	libusb-devel
 #BuildRequires:	ncurses-devel
-#BuildRequires:	ocaml-devel
+%{?with_ocaml:BuildRequires:	ocaml}
 #BuildRequires:	pkgconfig
 #BuildRequires:	python-devel
 #BuildRequires:	tcl-devel
