@@ -174,6 +174,7 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	--disable-tainted-components \
+	%{!?with_java:--disable-java-bindings} \
 	--enable-api
 %{__make}
 
