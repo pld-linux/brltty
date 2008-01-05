@@ -10,6 +10,8 @@
 %bcond_without	apidocs		# documentation generated with doxygen
 %bcond_with	java		# java bindings
 %bcond_with	ocaml		# ocaml bindings (NFY)
+%bcond_without	python		# python bindings
+%bcond_without	tcl		# tcl bindings
 #
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
@@ -32,8 +34,9 @@ BuildRequires:	bison
 #BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 #BuildRequires:	pkgconfig
-#BuildRequires:	python-devel
-#BuildRequires:	tcl-devel
+%{?with_python:BuildRequires:	python-Pyrex}
+%{?with_python:BuildRequires:	rpm-pythonprov}
+%{?with_tcl:BuildRequires:	tcl}
 #BuildRequires:	xorg-lib-libX*
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -134,6 +137,30 @@ BrlAPI library for Java.
 
 %description -n brlapi-java -l pl.UTF-8
 Biblioteka BrlAPI dla Javy.
+
+%package -n python-brlapi
+Summary:	Python interface to BrlAPI
+Summary(pl.UTF-8):	Pythonowy interfejs do BrlAPI
+Group:		Libraries
+Requires:	brlapi = %{version}-%{release}
+
+%description -n python-brlapi
+Python interface to BrlAPI.
+
+%description -n python-brlapi -l pl.UTF-8
+Pythonowy interfejs do BrlAPI.
+
+%package -n brlapi-tcl
+Summary:	BrlAPI library for Tcl
+Summary(pl.UTF-8):	Biblioteka BrlAPI dla Tcl
+Group:		Libraries
+Requires:	brlapi = %{version}-%{release}
+
+%description -n brlapi-tcl
+BrlAPI library for Tcl.
+
+%description -n brlapi-tcl -l pl.UTF-8
+Biblioteka BrlAPI dla Tcl.
 
 %prep
 %setup -q
@@ -495,6 +522,7 @@ exit 0
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libbrlapi.so.0.5
 %attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.1
+%dir %{_libdir}/brlapi-0.5.1
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
@@ -520,4 +548,18 @@ exit 0
 %defattr(644,root,root,755)
 %{_libdir}/java/libbrlapi_java.so
 %{_javadir}/brlapi.jar
+%endif
+
+%if %{with python}
+%files -n python-brlapi
+%defattr(644,root,root,755)
+%{py_sitedir}/Brlapi-*.egg-info
+%attr(755,root,root) %{py_sitedir}/brlapi.so
+%endif
+
+%if %{with tcl}
+%files -n brlapi-tcl
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/brlapi-0.5.1/libbrlapi_tcl.so
+%{_libdir}/brlapi-0.5.1/pkgIndex.tcl
 %endif
