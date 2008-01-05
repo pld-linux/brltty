@@ -29,9 +29,8 @@ BuildRequires:	automake
 BuildRequires:	bison
 #BuildRequires:	bluez-devel
 %{?with_apidocs:BuildRequires:	doxygen}
-#BuildRequires:	gpm-devel
+BuildRequires:	gpm-devel
 %{?with_java:BuildRequires:	jdk}
-#BuildRequires:	libusb-devel
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 #BuildRequires:	pkgconfig
@@ -171,7 +170,7 @@ Biblioteka BrlAPI dla Tcl.
 %{__aclocal}
 %{__autoconf}
 cp -f /usr/share/automake/config.sub acdir
-CPPFLAGS="-I/usr/include/ncurses"
+CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	--disable-tainted-components \
