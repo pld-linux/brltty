@@ -171,7 +171,7 @@ Biblioteka BrlAPI dla Tcl.
 %{__aclocal}
 %{__autoconf}
 cp -f /usr/share/automake/config.sub acdir
-CFLAGS="-I/usr/include/ncurses"
+CPPFLAGS="-I/usr/include/ncurses"
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	--disable-tainted-components \
