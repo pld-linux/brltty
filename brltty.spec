@@ -4,9 +4,11 @@
 #	- ocaml bcond is useless now:
 #		Cannot find ocamlfind.
 #		BrlAPI Caml bindings will be compiled but not installed.
+#	- check java stuff
 #
 # Conditional build:
 %bcond_without	apidocs		# documentation generated with doxygen
+%bcond_with	java		# java bindings
 %bcond_with	ocaml		# ocaml bindings (NFY)
 #
 Summary:	Braille display driver for Linux/Unix
@@ -25,7 +27,7 @@ BuildRequires:	bison
 #BuildRequires:	bluez-devel
 %{?with_apidocs:BuildRequires:	doxygen}
 #BuildRequires:	gpm-devel
-#BuildRequires:	java-?
+%{?with_java:BuildRequires:	jdk}
 #BuildRequires:	libusb-devel
 #BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
@@ -120,6 +122,18 @@ sources by doxygen.
 %description -n brlapi-apidocs -l pl.UTF-8
 Dokumentacja BrlAPI w formacie HTML generowane ze
 źrodeł brltty przez doxygen.
+
+%package -n brlapi-java
+Summary:	BrlAPI library for Java
+Summary(pl.UTF-8):	Biblioteka BrlAPI dla Javy
+Group:		Libraries
+Requires:	brlapi = %{version}-%{release}
+
+%description -n brlapi-java
+BrlAPI library for Java.
+
+%description -n brlapi-java -l pl.UTF-8
+Biblioteka BrlAPI dla Javy.
 
 %prep
 %setup -q
@@ -495,6 +509,15 @@ exit 0
 %defattr(644,root,root,755)
 %{_libdir}/libbrlapi.a
 
+%if %{with apidocs}
 %files -n brlapi-apidocs
 %defattr(644,root,root,755)
 %doc Documents/BrlAPIref/html/*
+%endif
+
+%if %{with java}
+%files -n brlapi-java
+%defattr(644,root,root,755)
+%{_libdir}/java/libbrlapi_java.so
+%{_javadir}/brlapi.jar
+%endif
