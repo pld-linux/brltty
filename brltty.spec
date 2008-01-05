@@ -1,3 +1,7 @@
+# TODO:
+#	- check BR
+#	- more packages (bindings)
+#
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
@@ -11,6 +15,18 @@ Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 BuildRequires:	autoconf >= 2.53
 BuildRequires:	automake
 BuildRequires:	bison
+#BuildRequires:	bluez-devel
+#BuildRequires:	doxygen
+#BuildRequires:	libtool
+#BuildRequires:	gpm-devel
+#BuildRequires:	java-?
+#BuildRequires:	libusb-devel
+#BuildRequires:	ncurses-devel
+#BuildRequires:	ocaml-devel
+#BuildRequires:	pkgconfig
+#BuildRequires:	python-devel
+#BuildRequires:	tcl-devel
+#BuildRequires:	xorg-lib-libX*
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
