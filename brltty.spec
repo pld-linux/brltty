@@ -42,6 +42,20 @@ BuildRequires:	pkgconfig
 %{?with_tcl:BuildRequires:	tcl}
 %{?with_x:BuildRequires:	xorg-lib-libXaw-devel}
 %{?with_x:BuildRequires:	xorg-lib-libXtst-devel}
+# libbrlttyblb
+#BR: libbraile-devel (-lllibbraile <braille.h>)
+# libbrlttysfl
+BuildRequires:	flite-devel
+# libbrlttysmp
+#BR: Mikropuhe-devel (-lmikropuhe <mpwrfile.h>)
+# libbrlttyssd
+#BuildRequires:	speech-dispatcher-devel
+# libbrlttyssw
+#BR: Swift-devel (-lswift <swift.h>)
+# libbrlttysth
+#BR: Theta-devel (-ltheta <theta.h>)
+# libbrlttysvv
+#BR: ViaVoice-devel (-lviavoice <eci.h>)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -496,7 +510,6 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybfl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybil.so
@@ -517,6 +530,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyscb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttysfl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysgs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so
