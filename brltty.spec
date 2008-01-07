@@ -14,6 +14,7 @@
 %bcond_without	tcl		# tcl bindings
 %bcond_without	x		# build X11-based utilities
 #
+%include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
@@ -36,6 +37,7 @@ BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-Pyrex}
+%{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
 %{?with_tcl:BuildRequires:	tcl}
 %{?with_x:BuildRequires:	xorg-lib-libXaw-devel}
@@ -128,16 +130,16 @@ sources by doxygen.
 Dokumentacja BrlAPI w formacie HTML generowane ze
 źrodeł brltty przez doxygen.
 
-%package -n brlapi-java
+%package -n java-brlapi
 Summary:	BrlAPI library for Java
 Summary(pl.UTF-8):	Biblioteka BrlAPI dla Javy
 Group:		Libraries
 Requires:	brlapi = %{version}-%{release}
 
-%description -n brlapi-java
+%description -n java-brlapi
 BrlAPI library for Java.
 
-%description -n brlapi-java -l pl.UTF-8
+%description -n java-brlapi -l pl.UTF-8
 Biblioteka BrlAPI dla Javy.
 
 %package -n python-brlapi
@@ -550,7 +552,7 @@ exit 0
 %endif
 
 %if %{with java}
-%files -n brlapi-java
+%files -n java-brlapi
 %defattr(644,root,root,755)
 %{_libdir}/java/libbrlapi_java.so
 %{_javadir}/brlapi.jar
