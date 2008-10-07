@@ -6,6 +6,18 @@
 #	- check java stuff
 #	- create bcond to build with minimal deps (wo ncurses,gpm,at-spi*)
 #
+# warning: Installed (but unpackaged) file(s) found:
+#    /usr/lib/brltty/libbrlttybbs.so
+#    /usr/lib/ocaml/brlapi/META
+#    /usr/lib/ocaml/brlapi/brlapi.cma
+#    /usr/lib/ocaml/brlapi/brlapi.cmi
+#    /usr/lib/ocaml/brlapi/brlapi.cmxa
+#    /usr/lib/ocaml/brlapi/brlapi.mli
+#    /usr/lib/ocaml/brlapi/libbrlapi_stubs.a
+#    /usr/lib/ocaml/stublibs/dllbrlapi_stubs.so
+#    /usr/lib/ocaml/stublibs/dllbrlapi_stubs.so.owner
+#    /usr/share/man/man1/xbrlapi.1.gz
+#
 # Conditional build:
 %bcond_without	apidocs		# documentation generated with doxygen
 %bcond_with	java		# java bindings
@@ -18,15 +30,16 @@
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	3.9
-Release:	2
+Version:	3.10
+Release:	1
 Group:		Daemons
 License:	GPL
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
-# Source0-md5:	7ce54ba2d38b7c220870e8c781f36743
+# Source0-md5:	d52f332a29e00495d166e7f45403fa9d
+Patch0:		%{name}-ac.patch
 URL:		http://mielke.cc/brltty/
 BuildRequires:	at-spi-devel
-BuildRequires:	autoconf >= 2.53
+BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake
 BuildRequires:	bison
 #BuildRequires:	bluez-devel
@@ -182,6 +195,7 @@ Biblioteka BrlAPI dla Tcl.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %{__aclocal}
@@ -543,7 +557,7 @@ exit 0
 
 %files -n brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.1
+%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.2
 %attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.5
 
 %files -n brlapi-devel
@@ -582,7 +596,7 @@ exit 0
 %if %{with tcl}
 %files -n brlapi-tcl
 %defattr(644,root,root,755)
-%dir %{_libdir}/brlapi-0.5.1
-%attr(755,root,root) %{_libdir}/brlapi-0.5.1/libbrlapi_tcl.so
-%{_libdir}/brlapi-0.5.1/pkgIndex.tcl
+%dir %{_libdir}/brlapi-0.5.2
+%attr(755,root,root) %{_libdir}/brlapi-0.5.2/libbrlapi_tcl.so
+%{_libdir}/brlapi-0.5.2/pkgIndex.tcl
 %endif
