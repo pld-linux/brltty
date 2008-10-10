@@ -7,7 +7,6 @@
 #	- create bcond to build with minimal deps (wo ncurses,gpm,at-spi*)
 #
 # warning: Installed (but unpackaged) file(s) found:
-#    /usr/lib/brltty/libbrlttybbs.so
 #    /usr/lib/ocaml/brlapi/META
 #    /usr/lib/ocaml/brlapi/brlapi.cma
 #    /usr/lib/ocaml/brlapi/brlapi.cmi
@@ -219,7 +218,7 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} install
+%{__make} -j1 install
 install Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
 %clean
@@ -521,6 +520,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbn.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybbs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
