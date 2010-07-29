@@ -202,7 +202,8 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 	--with-install-root="$RPM_BUILD_ROOT" \
 	%{!?with_java:--disable-java-bindings} \
 	--enable-api
-%{__make}
+
+%{__make} -j1
 
 directory="doc"
 mkdir -p "$directory"
