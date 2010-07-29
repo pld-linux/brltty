@@ -35,7 +35,7 @@ Group:		Daemons
 License:	GPL
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 # Source0-md5:	192af5e634210616928496645e392097
-Patch0:		%{name}-ac.patch
+Patch0:		%{name}-stat.patch
 URL:		http://mielke.cc/brltty/
 BuildRequires:	at-spi-devel
 BuildRequires:	autoconf >= 2.62
@@ -194,7 +194,7 @@ Biblioteka BrlAPI dla Tcl.
 
 %prep
 %setup -q
-#%patch0 -p1
+%patch0 -p1
 
 %build
 %{__aclocal}
