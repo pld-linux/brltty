@@ -549,7 +549,9 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybpg.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybsk.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so
 
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
