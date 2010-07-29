@@ -30,7 +30,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	4.2
-Release:	0.1
+Release:	1
 Group:		Daemons
 License:	GPL
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
