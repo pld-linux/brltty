@@ -197,13 +197,9 @@ Biblioteka BrlAPI dla Tcl.
 %patch0 -p1
 
 %build
-%{__aclocal}
-%{__autoconf}
-cp -f /usr/share/automake/config.sub acdir
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
-	--disable-tainted-components \
 	%{!?with_java:--disable-java-bindings} \
 	--enable-api
 %{__make}
@@ -506,7 +502,7 @@ exit 0
 %files
 %defattr(644,root,root,755)
 %doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO}
-%doc doc/{Bindings,Bootdisks,BrailleDrivers,BrailleTables,ContractionTables,Patches,README,SpeechDrivers}
+%doc doc/{Bindings,Bootdisks,Drivers,Patches,Tables,README,nsistrings.txt}
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-install
 %attr(755,root,root) %{_bindir}/brltty-config
@@ -520,7 +516,6 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbn.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybbs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
@@ -543,26 +538,32 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysal.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyscb.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysfl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysgs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxlx.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybmt.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybpg.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybsk.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so
+
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
 %{_mandir}/man1/brltty.1*
 %{_mandir}/man1/vstp.1*
+%{?with_x:%{_mandir}/man1/xbrlapi.1*}
 
 %files -n brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.2
+%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.5
 %attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.5
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
-%doc Documents/README.Gnopernicus
 %doc Documents/Manual-BrlAPI/English/BrlAPI*
 %attr(755,root,root) %{_libdir}/libbrlapi.so
 %{_includedir}/brltty
@@ -596,7 +597,7 @@ exit 0
 %if %{with tcl}
 %files -n brlapi-tcl
 %defattr(644,root,root,755)
-%dir %{_libdir}/brlapi-0.5.2
-%attr(755,root,root) %{_libdir}/brlapi-0.5.2/libbrlapi_tcl.so
-%{_libdir}/brlapi-0.5.2/pkgIndex.tcl
+%dir %{_libdir}/brlapi-0.5.5
+%attr(755,root,root) %{_libdir}/brlapi-0.5.5/libbrlapi_tcl.so
+%{_libdir}/brlapi-0.5.5/pkgIndex.tcl
 %endif
