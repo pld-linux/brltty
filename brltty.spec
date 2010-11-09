@@ -51,7 +51,7 @@ BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-Pyrex}
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
-%{?with_tcl:BuildRequires:	tcl}
+%{?with_tcl:BuildRequires:	tcl-devel}
 %{?with_x:BuildRequires:	xorg-lib-libXaw-devel}
 %{?with_x:BuildRequires:	xorg-lib-libXtst-devel}
 # libbrlttyblb
