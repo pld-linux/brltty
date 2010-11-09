@@ -26,6 +26,7 @@
 %bcond_without	x		# build X11-based utilities
 %bcond_without	speech_dispatcher	# build without speech-dispatcher driver
 %bcond_without	at_spi2		# build without AtSpi2 driver
+%bcond_without	espeak		# build without eSpeak driver
 #
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
@@ -46,6 +47,7 @@ BuildRequires:	bison
 #BuildRequires:	bluez-devel
 %{?with_at_spi2:BuildRequires:	dbus-devel}
 %{?with_apidocs:BuildRequires:	doxygen}
+%{?with_espeak:BuildRequires:	espeak-devel}
 BuildRequires:	gpm-devel
 %{?with_java:BuildRequires:	jdk}
 BuildRequires:	ncurses-devel
@@ -553,7 +555,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybpg.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybsk.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
+%{?with_espeak:%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so}
 %{?with_at_spi2:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so}
 %{?with_speech_dispatcher:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so}
 
