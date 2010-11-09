@@ -24,6 +24,7 @@
 %bcond_without	python		# python bindings
 %bcond_without	tcl		# tcl bindings
 %bcond_without	x		# build X11-based utilities
+%bcond_without	speech_dispatcher	# build without speech-dispatcher driver
 #
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
@@ -61,7 +62,7 @@ BuildRequires:	flite-devel
 # libbrlttysmp
 #BR: Mikropuhe-devel (-lmikropuhe <mpwrfile.h>)
 # libbrlttyssd
-#BuildRequires:	speech-dispatcher-devel
+%{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel}
 # libbrlttyssw
 #BR: Swift-devel (-lswift <swift.h>)
 # libbrlttysth
@@ -552,7 +553,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so
+%{?with_speech_dispatcher:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so}
 
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
