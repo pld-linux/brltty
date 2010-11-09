@@ -25,6 +25,7 @@
 %bcond_without	tcl		# tcl bindings
 %bcond_without	x		# build X11-based utilities
 %bcond_without	speech_dispatcher	# build without speech-dispatcher driver
+%bcond_without	at_spi2		# build without AtSpi2 driver
 #
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
@@ -43,6 +44,7 @@ BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake
 BuildRequires:	bison
 #BuildRequires:	bluez-devel
+%{?with_at_spi2:BuildRequires:	dbus-devel}
 %{?with_apidocs:BuildRequires:	doxygen}
 BuildRequires:	gpm-devel
 %{?with_java:BuildRequires:	jdk}
@@ -552,7 +554,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybsk.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so
+%{?with_at_spi2:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so}
 %{?with_speech_dispatcher:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so}
 
 %{_sysconfdir}/brltty
