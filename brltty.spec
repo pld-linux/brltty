@@ -1,13 +1,9 @@
 # TODO:
 #	- what is that huge %post script?
-#	- ocaml bcond is useless now:
-#		Cannot find ocamlfind.
-#		BrlAPI Caml bindings will be compiled but not installed.
-#	- check java stuff
 #
 # Conditional build:
 %bcond_without	apidocs			# documentation generated with doxygen
-%bcond_with	java			# Java bindings
+%bcond_without	java			# Java bindings
 %bcond_without	ocaml			# OCaml bindings
 %bcond_without	python			# Python bindings
 %bcond_without	tcl			# Tcl bindings
@@ -26,7 +22,7 @@ Name:		brltty
 Version:	4.3
 Release:	1
 Group:		Daemons
-License:	GPL
+License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
 # Source0-md5:	5ada573f88df32b6150db3b9a620e20b
 Patch0:		%{name}-stat.patch
@@ -90,7 +86,8 @@ mowy.
 %package -n brlapi
 Summary:	Application Programming Interface for BRLTTY
 Summary(pl.UTF-8):	API do BRLTTY
-Group:		Applications/System
+License:	LGPL v2.1+
+Group:		Libraries
 
 %description -n brlapi
 This package provides the run-time support for the Application
@@ -109,6 +106,7 @@ wyświetlacza Braille'a z odświeżaniem.
 %package -n brlapi-devel
 Summary:	Headers and documentation for BrlAPI
 Summary(pl.UTF-8):	Pliki nagłówkowe i dokumentacja do BrlAPI
+License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	brlapi = %{version}-%{release}
 
@@ -136,6 +134,7 @@ korzystającą bezpośrednio z odświeżalnych wyświetlaczy Braille'a.
 %package -n brlapi-static
 Summary:	Static BrlAPI library
 Summary(pl.UTF-8):	Statyczna biblioteka BrlAPI
+License:	LGPL v2.1+
 Group:		Development/Libraries
 Requires:	brlapi-devel = %{version}-%{release}
 
@@ -161,6 +160,7 @@ Dokumentacja BrlAPI w formacie HTML generowane ze
 %package -n java-brlapi
 Summary:	BrlAPI library for Java
 Summary(pl.UTF-8):	Biblioteka BrlAPI dla Javy
+License:	LGPL v2.1+
 Group:		Libraries
 Requires:	brlapi = %{version}-%{release}
 
@@ -173,6 +173,7 @@ Biblioteka BrlAPI dla Javy.
 %package -n ocaml-brlapi
 Summary:	OCaml binding for BrlAPI
 Summary(pl.UTF-8):	Wiązania OCamla do BrlAPI
+License:	LGPL v2.1+
 Group:		Libraries
 Requires:	brlapi = %{version}-%{release}
 %requires_eq	ocaml-runtime
@@ -186,6 +187,7 @@ Wiązania OCamla do BrlAPI.
 %package -n ocaml-brlapi-devel
 Summary:	OCaml binding for BrlAPI - development files
 Summary(pl.UTF-8):	Wiązania OCamla do BrlAPI - pliki programistyczne
+License:	LGPL v2.1+
 Group:		Libraries
 Requires:	ocaml-brlapi = %{version}-%{release}
 %requires_eq	ocaml
@@ -199,6 +201,7 @@ Wiązania OCamla do BrlAPI - pliki programistyczne.
 %package -n python-brlapi
 Summary:	Python interface to BrlAPI
 Summary(pl.UTF-8):	Pythonowy interfejs do BrlAPI
+License:	LGPL v2.1+
 Group:		Libraries
 Requires:	brlapi = %{version}-%{release}
 
@@ -211,6 +214,7 @@ Pythonowy interfejs do BrlAPI.
 %package -n brlapi-tcl
 Summary:	BrlAPI library for Tcl
 Summary(pl.UTF-8):	Biblioteka BrlAPI dla Tcl
+License:	LGPL v2.1+
 Group:		Libraries
 Requires:	brlapi = %{version}-%{release}
 
@@ -641,7 +645,7 @@ exit 0
 %if %{with java}
 %files -n java-brlapi
 %defattr(644,root,root,755)
-%{_libdir}/java/libbrlapi_java.so
+%attr(755,root,root) %{_libdir}/java/libbrlapi_java.so
 %{_javadir}/brlapi.jar
 %endif
 
