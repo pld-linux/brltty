@@ -4,52 +4,46 @@
 #		Cannot find ocamlfind.
 #		BrlAPI Caml bindings will be compiled but not installed.
 #	- check java stuff
-#	- create bcond to build with minimal deps (wo ncurses,gpm,at-spi*)
-#
-# warning: Installed (but unpackaged) file(s) found:
-#    /usr/lib/ocaml/brlapi/META
-#    /usr/lib/ocaml/brlapi/brlapi.cma
-#    /usr/lib/ocaml/brlapi/brlapi.cmi
-#    /usr/lib/ocaml/brlapi/brlapi.cmxa
-#    /usr/lib/ocaml/brlapi/brlapi.mli
-#    /usr/lib/ocaml/brlapi/libbrlapi_stubs.a
-#    /usr/lib/ocaml/stublibs/dllbrlapi_stubs.so
-#    /usr/lib/ocaml/stublibs/dllbrlapi_stubs.so.owner
-#    /usr/share/man/man1/xbrlapi.1.gz
 #
 # Conditional build:
-%bcond_without	apidocs		# documentation generated with doxygen
-%bcond_with	java		# java bindings
-%bcond_with	ocaml		# ocaml bindings (NFY)
-%bcond_without	python		# python bindings
-%bcond_without	tcl		# tcl bindings
-%bcond_without	x		# build X11-based utilities
-%bcond_without	speech_dispatcher	# build without speech-dispatcher driver
-%bcond_without	at_spi2		# build without AtSpi2 driver
-%bcond_without	espeak		# build without eSpeak driver
+%bcond_without	apidocs			# documentation generated with doxygen
+%bcond_with	java			# Java bindings
+%bcond_without	ocaml			# OCaml bindings
+%bcond_without	python			# Python bindings
+%bcond_without	tcl			# Tcl bindings
+%bcond_without	x			# X11-based utilities
+%bcond_without	gpm			# mouse tracking via GPM
+%bcond_without	espeak			# eSpeak synthesizer driver
+%bcond_without	flite			# Flite synthesizer driver
+%bcond_without	speech_dispatcher	# Speech Dispatcher synthesizer driver
+%bcond_without	at_spi			# build without AtSpi driver
+%bcond_without	at_spi2			# build without AtSpi2 driver
 #
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	4.2
-Release:	5
+Version:	4.3
+Release:	1
 Group:		Daemons
 License:	GPL
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
-# Source0-md5:	192af5e634210616928496645e392097
+# Source0-md5:	5ada573f88df32b6150db3b9a620e20b
 Patch0:		%{name}-stat.patch
 URL:		http://mielke.cc/brltty/
-BuildRequires:	at-spi-devel
+BuildRequires:	alsa-lib-devel
+%{?with_at_spi:BuildRequires:	at-spi-devel}
 BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake
 BuildRequires:	bison
-#BuildRequires:	bluez-devel
-%{?with_at_spi2:BuildRequires:	dbus-devel}
+# just headers
+BuildRequires:	bluez-libs-devel
+%{?with_at_spi2:BuildRequires:	dbus-devel >= 1.0}
 %{?with_apidocs:BuildRequires:	doxygen}
 %{?with_espeak:BuildRequires:	espeak-devel}
-BuildRequires:	gpm-devel
+%{?with_gpm:BuildRequires:	gpm-devel}
 %{?with_java:BuildRequires:	jdk}
+BuildRequires:	libicu-devel
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 BuildRequires:	pkgconfig
@@ -57,22 +51,25 @@ BuildRequires:	pkgconfig
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
 %{?with_tcl:BuildRequires:	tcl-devel}
-%{?with_x:BuildRequires:	xorg-lib-libXaw-devel}
-%{?with_x:BuildRequires:	xorg-lib-libXtst-devel}
+%if %{with x}
+BuildRequires:	xorg-lib-libX11-devel
+BuildRequires:	xorg-lib-libXaw-devel
+BuildRequires:	xorg-lib-libXext-devel
+BuildRequires:	xorg-lib-libXt-devel
+BuildRequires:	xorg-lib-libXtst-devel
+%endif
 # libbrlttyblb
 #BR: libbraile-devel (-lllibbraile <braille.h>)
-# libbrlttysfl
-BuildRequires:	flite-devel
+%{?with_flite:BuildRequires:	flite-devel}
 # libbrlttysmp
 #BR: Mikropuhe-devel (-lmikropuhe <mpwrfile.h>)
-# libbrlttyssd
 %{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel}
 # libbrlttyssw
 #BR: Swift-devel (-lswift <swift.h>)
 # libbrlttysth
 #BR: Theta-devel (-ltheta <theta.h>)
 # libbrlttysvv
-#BR: ViaVoice-devel (-lviavoice <eci.h>)
+#BR: ViaVoice-devel (-libmeci50 <eci.h>)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -173,6 +170,32 @@ BrlAPI library for Java.
 %description -n java-brlapi -l pl.UTF-8
 Biblioteka BrlAPI dla Javy.
 
+%package -n ocaml-brlapi
+Summary:	OCaml binding for BrlAPI
+Summary(pl.UTF-8):	Wiązania OCamla do BrlAPI
+Group:		Libraries
+Requires:	brlapi = %{version}-%{release}
+%requires_eq	ocaml-runtime
+
+%description -n ocaml-brlapi
+OCaml binding for BrlAPI.
+
+%description -n ocaml-brlapi -l pl.UTF-8
+Wiązania OCamla do BrlAPI.
+
+%package -n ocaml-brlapi-devel
+Summary:	OCaml binding for BrlAPI - development files
+Summary(pl.UTF-8):	Wiązania OCamla do BrlAPI - pliki programistyczne
+Group:		Libraries
+Requires:	ocaml-brlapi = %{version}-%{release}
+%requires_eq	ocaml
+
+%description -n ocaml-brlapi-devel
+OCaml binding for BrlAPI - development files.
+
+%description -n ocaml-brlapi-devel -l pl.UTF-8
+Wiązania OCamla do BrlAPI - pliki programistyczne.
+
 %package -n python-brlapi
 Summary:	Python interface to BrlAPI
 Summary(pl.UTF-8):	Pythonowy interfejs do BrlAPI
@@ -205,7 +228,15 @@ Biblioteka BrlAPI dla Tcl.
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
 	--with-install-root="$RPM_BUILD_ROOT" \
+	%{!?with_espeak:--without-espeak} \
+	%{!?with_flite:--without-flite} \
+	%{!?with_speech_dispatcher:--without-speechd} \
+	%{!?with_ocaml:--disable-caml-bindings} \
+	%{!?with_gpm:--disable-gpm} \
 	%{!?with_java:--disable-java-bindings} \
+	%{!?with_python:--disable-python-bindings} \
+	%{!?with_tcl:--disable-tcl-bindings} \
+	%{!?with_x:--disable-x} \
 	--enable-api
 
 %{__make} -j1
@@ -220,8 +251,16 @@ done
 
 %install
 rm -rf $RPM_BUILD_ROOT
-%{__make} -j1 install
+
+%{__make} -j1 install \
+	OCAML_INSTALL_TARGET=install-without-findlib
+
 install Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
+
+install -d $RPM_BUILD_ROOT/usr/lib/tmpfiles.d
+cat >$RPM_BUILD_ROOT/usr/lib/tmpfiles.d/brltty.conf <<EOF
+d /var/run/brltty 0755 root root -
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -515,9 +554,11 @@ exit 0
 %attr(755,root,root) %{_bindir}/vstp
 %{?with_x:%attr(755,root,root) %{_bindir}/xbrlapi}
 %dir %{_libdir}/brltty
+# Braille drivers
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybal.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybat.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybba.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybbc.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbd.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbm.so
@@ -526,13 +567,18 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybil.so
+#%{?with_libbraille:%attr(755,root,root) %{_libdir}/brltty/libbrlttyblb.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyblt.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybmb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybmd.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybmn.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybmt.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybpg.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybpm.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybsk.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybtn.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybts.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybtt.so
@@ -541,33 +587,37 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybvr.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybvs.so
 %{?with_x:%attr(755,root,root) %{_libdir}/brltty/libbrlttybxw.so}
+# speech synthesizer drivers
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysal.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyscb.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttysfl.so
+%{?with_espeak:%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so}
+%{?with_flite:%attr(755,root,root) %{_libdir}/brltty/libbrlttysfl.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysgs.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so
+#%{?with_mikropuhe:%attr(755,root,root) %{_libdir}/brltty/libbrlttysmp.so}
+%{?with_speech_dispatcher:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so}
+#%{?with_swift:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssw.so}
+#%{?with_theta:%attr(755,root,root) %{_libdir}/brltty/libbrlttysth.so}
+#%{?with_viavoice:%attr(755,root,root) %{_libdir}/brltty/libbrlttysvv.so}
+%attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
+# screen drivers
+%{?with_at_spi2:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so}
+%{?with_at_spi:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxlx.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybmt.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybpg.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybsk.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
-%{?with_espeak:%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so}
-%{?with_at_spi2:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so}
-%{?with_speech_dispatcher:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so}
-
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
+/usr/lib/tmpfiles.d/brltty.conf
+%dir /var/lib/BrlAPI
+%dir /var/run/brltty
 %{_mandir}/man1/brltty.1*
 %{_mandir}/man1/vstp.1*
 %{?with_x:%{_mandir}/man1/xbrlapi.1*}
 
 %files -n brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libbrlapi.so.0.5.5
+%attr(755,root,root) %{_libdir}/libbrlapi.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.5
 
 %files -n brlapi-devel
@@ -576,7 +626,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/libbrlapi.so
 %{_includedir}/brltty
 %{_includedir}/brlapi*.h
-%{_mandir}/man3/*
+%{_mandir}/man3/brlapi_*.3*
 
 %files -n brlapi-static
 %defattr(644,root,root,755)
@@ -595,17 +645,32 @@ exit 0
 %{_javadir}/brlapi.jar
 %endif
 
+%if %{with ocaml}
+%files -n ocaml-brlapi
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so
+%{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so.owner
+
+%files -n ocaml-brlapi-devel
+%defattr(644,root,root,755)
+%dir %{_libdir}/ocaml/brlapi
+%{_libdir}/ocaml/brlapi/META
+%{_libdir}/ocaml/brlapi/brlapi.cm[aix]*
+%{_libdir}/ocaml/brlapi/brlapi.mli
+%{_libdir}/ocaml/brlapi/libbrlapi_stubs.a
+%endif
+
 %if %{with python}
 %files -n python-brlapi
 %defattr(644,root,root,755)
-%{py_sitedir}/Brlapi-*.egg-info
 %attr(755,root,root) %{py_sitedir}/brlapi.so
+%{py_sitedir}/Brlapi-*.egg-info
 %endif
 
 %if %{with tcl}
 %files -n brlapi-tcl
 %defattr(644,root,root,755)
-%dir %{_libdir}/brlapi-0.5.5
-%attr(755,root,root) %{_libdir}/brlapi-0.5.5/libbrlapi_tcl.so
-%{_libdir}/brlapi-0.5.5/pkgIndex.tcl
+%dir %{_libdir}/brlapi-0.5.6
+%attr(755,root,root) %{_libdir}/brlapi-0.5.6/libbrlapi_tcl.so
+%{_libdir}/brlapi-0.5.6/pkgIndex.tcl
 %endif
