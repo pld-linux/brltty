@@ -12,7 +12,11 @@
 %bcond_without	libbraille		# libbraille Braille driver
 %bcond_without	espeak			# eSpeak synthesizer driver
 %bcond_without	flite			# Flite synthesizer driver
+%bcond_with	mikropuhe		# Mikropuhe synthesizer driver [commercial, Finnish]
 %bcond_without	speech_dispatcher	# Speech Dispatcher synthesizer driver
+%bcond_with	swift			# Swift synthesizer driver [commercial, from Cepstral]
+%bcond_with	theta			# Theta synthesizer driver [commercial, from Cepstral]
+%bcond_with	viavoice		# IBM ViaVoice synthesizer driver [commercial]
 %bcond_without	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 #
@@ -40,8 +44,10 @@ BuildRequires:	bluez-libs-devel
 %{?with_at_spi2:BuildRequires:	dbus-devel >= 1.0}
 %{?with_apidocs:BuildRequires:	doxygen}
 %{?with_espeak:BuildRequires:	espeak-devel}
+%{?with_flite:BuildRequires:	flite-devel}
 %{?with_gpm:BuildRequires:	gpm-devel}
 %{?with_java:BuildRequires:	jdk}
+%{?with_libbraille:BuildRequires:	libbraille-devel}
 BuildRequires:	libicu-devel
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
@@ -49,6 +55,7 @@ BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-Pyrex}
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
+%{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel}
 %{?with_tcl:BuildRequires:	tcl-devel}
 %if %{with x}
 BuildRequires:	xorg-lib-libX11-devel
@@ -57,17 +64,10 @@ BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	xorg-lib-libXtst-devel
 %endif
-%{?with_libbraille:BuildRequires:	libbraille-devel}
-%{?with_flite:BuildRequires:	flite-devel}
-# libbrlttysmp
-#BR: Mikropuhe-devel (-lmikropuhe <mpwrfile.h>)
-%{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel}
-# libbrlttyssw
-#BR: Swift-devel (-lswift <swift.h>)
-# libbrlttysth
-#BR: Theta-devel (-ltheta <theta.h>)
-# libbrlttysvv
-#BR: ViaVoice-devel (-libmeci50 <eci.h>)
+#%{?with_mikropuhe:BuildRequires:	Mikropuhe-devel (-lmikropuhe <mpwrfile.h>)}
+#%{?with_swift:BuildRequires:	Swift-devel (-lswift <swift.h>)}
+#%{?with_theta:BuildRequires:	Theta-devel (-ltheta <theta.h>)}
+#%{?with_viavoice:BuildRequires:	ViaVoice-devel (-libmeci50 <eci.h>)}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -608,11 +608,11 @@ exit 0
 %{?with_flite:%attr(755,root,root) %{_libdir}/brltty/libbrlttysfl.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysgs.so
-#%{?with_mikropuhe:%attr(755,root,root) %{_libdir}/brltty/libbrlttysmp.so}
+%{?with_mikropuhe:%attr(755,root,root) %{_libdir}/brltty/libbrlttysmp.so}
 %{?with_speech_dispatcher:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so}
-#%{?with_swift:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssw.so}
-#%{?with_theta:%attr(755,root,root) %{_libdir}/brltty/libbrlttysth.so}
-#%{?with_viavoice:%attr(755,root,root) %{_libdir}/brltty/libbrlttysvv.so}
+%{?with_swift:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssw.so}
+%{?with_theta:%attr(755,root,root) %{_libdir}/brltty/libbrlttysth.so}
+%{?with_viavoice:%attr(755,root,root) %{_libdir}/brltty/libbrlttysvv.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
 # screen drivers
 %{?with_at_spi2:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so}
