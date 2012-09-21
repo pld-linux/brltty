@@ -27,7 +27,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	4.4
-Release:	2
+Release:	3
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
@@ -261,6 +261,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} -j1 install \
 	OCAML_INSTALL_TARGET=install-without-findlib
+
+%if %{_lib} != "lib"
+	# Fix java plugin install path on 64-bit archs
+	install -d $RPM_BUILD_ROOT%{_libdir}/java
+	%{__mv} $RPM_BUILD_ROOT%{_prefix}/{lib,%{_lib}}/java/libbrlapi_java.so
+%endif
 
 install Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
