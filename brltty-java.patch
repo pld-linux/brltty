@@ -1,0 +1,11 @@
+--- brltty-4.5/Bindings/Java/bindings.m4.orig	2013-03-27 23:51:37.000000000 +0100
++++ brltty-4.5/Bindings/Java/bindings.m4	2013-04-07 18:39:56.903678323 +0200
+@@ -63,7 +63,7 @@
+    JAVA_JNI_INC="${JAVA_ROOT}/include"
+    JAVA_JNI_HDR="jni.h"
+    JAVA_JNI_FLAGS=""
+-   AC_CHECK_HEADER([${JAVA_JNI_HDR}], [], [AC_CHECK_FILE(["${JAVA_JNI_INC}/${JAVA_JNI_HDR}"], [JAVA_JNI_FLAGS="-I${JAVA_JNI_INC}"], [JAVA_OK=false])])
++   AC_CHECK_HEADER([${JAVA_JNI_HDR}], [], [AC_CHECK_FILE(["${JAVA_JNI_INC}/${JAVA_JNI_HDR}"], [JAVA_JNI_FLAGS="-I${JAVA_JNI_INC} -I${JAVA_JNI_INC}/linux"], [JAVA_OK=false])])
+    AC_SUBST([JAVA_JNI_HDR])
+    AC_SUBST([JAVA_JNI_INC])
+    AC_SUBST([JAVA_JNI_FLAGS])

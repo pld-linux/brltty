@@ -20,19 +20,21 @@
 %bcond_without	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 #
-%define		brlapi_ver	0.5.7
+%define		brlapi_ver	0.6.0
 #
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	4.4
-Release:	3
+Version:	4.5
+Release:	1
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
-# Source0-md5:	8ebe96efe679f5f6ccff08928fec5b26
+# Source0-md5:	7b52fa7746fed41ed344a1f75ce55951
 Patch0:		%{name}-stat.patch
+Patch1:		%{name}-java.patch
+Patch2:		%{name}-speech-dispatcher.patch
 URL:		http://mielke.cc/brltty/
 BuildRequires:	alsa-lib-devel
 %{?with_at_spi:BuildRequires:	at-spi-devel}
@@ -47,6 +49,7 @@ BuildRequires:	bluez-libs-devel
 %{?with_flite:BuildRequires:	flite-devel}
 %{?with_gpm:BuildRequires:	gpm-devel}
 %{?with_java:BuildRequires:	jdk}
+%{?with_java:BuildRequires:	jpackage-utils}
 %{?with_libbraille:BuildRequires:	libbraille-devel}
 BuildRequires:	libicu-devel
 BuildRequires:	ncurses-devel
@@ -55,7 +58,7 @@ BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-Pyrex}
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
-%{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel}
+%{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel >= 0.8}
 %{?with_tcl:BuildRequires:	tcl-devel}
 %if %{with x}
 BuildRequires:	xorg-lib-libX11-devel
@@ -229,10 +232,14 @@ Biblioteka BrlAPI dla Tcl.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
+%patch2 -p1
 
 %build
+%{__autoconf}
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
+	%{?with_java:JAVA_HOME=%{java_home}} \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	%{!?with_libbraille:--without-libbraille} \
 	%{!?with_espeak:--without-espeak} \
@@ -580,13 +587,13 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbn.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybce.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhw.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybil.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybir.so
 %{?with_libbraille:%attr(755,root,root) %{_libdir}/brltty/libbrlttyblb.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyblt.so
@@ -637,7 +644,7 @@ exit 0
 %files -n brlapi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libbrlapi.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.5
+%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.6
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
