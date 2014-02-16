@@ -6,6 +6,7 @@
 %bcond_without	java			# Java bindings
 %bcond_without	ocaml			# OCaml bindings
 %bcond_without	python			# Python bindings
+%bcond_without	python3			# Python 3.x bindings
 %bcond_without	tcl			# Tcl bindings
 %bcond_without	x			# X11-based utilities
 %bcond_without	gpm			# mouse tracking via GPM
@@ -57,6 +58,7 @@ BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 BuildRequires:	pkgconfig
 %{?with_python:BuildRequires:	python-Cython}
+%{?with_python3:BuildRequires:	python3-Cython}
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
 %{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel >= 0.8}
@@ -207,17 +209,30 @@ OCaml binding for BrlAPI - development files.
 Wiązania OCamla do BrlAPI - pliki programistyczne.
 
 %package -n python-brlapi
-Summary:	Python interface to BrlAPI
-Summary(pl.UTF-8):	Pythonowy interfejs do BrlAPI
+Summary:	Python 2.x interface to BrlAPI
+Summary(pl.UTF-8):	Interfejs Pythona 2.x do BrlAPI
 License:	LGPL v2.1+
 Group:		Libraries
 Requires:	brlapi = %{version}-%{release}
 
 %description -n python-brlapi
-Python interface to BrlAPI.
+Python 2.x interface to BrlAPI.
 
 %description -n python-brlapi -l pl.UTF-8
-Pythonowy interfejs do BrlAPI.
+Interfejs Pythona 2.x do BrlAPI.
+
+%package -n python3-brlapi
+Summary:	Python 3.x interface to BrlAPI
+Summary(pl.UTF-8):	Interfejs Pythona 3.x do BrlAPI
+License:	LGPL v2.1+
+Group:		Libraries
+Requires:	brlapi = %{version}-%{release}
+
+%description -n python3-brlapi
+Python 3.x interface to BrlAPI.
+
+%description -n python3-brlapi -l pl.UTF-8
+Interfejs Pythona 3.x do BrlAPI.
 
 %package -n brlapi-tcl
 Summary:	BrlAPI library for Tcl
@@ -259,6 +274,13 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 
 %{__make} -j1
 
+%if %{with python3}
+cd Bindings/Python
+%{__python3} setup.py build \
+	-b build-3
+cd ../..
+%endif
+
 directory="doc"
 mkdir -p "$directory"
 for file in `find . \( -path "./$directory" -o -path ./Documents \) -prune -o \( -name 'README*' -o -name '*.txt' -o -name '*.html' -o -name '*.sgml' -o \( -path "./Bootdisks/*" -type f -perm +ugo=x \) \) -print`
@@ -272,6 +294,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} -j1 install \
 	OCAML_INSTALL_TARGET=install-without-findlib
+
+%if %{with python3}
+cd Bindings/Python
+%{__python3} setup.py \
+	build \
+		-b build-3 \
+	install \
+		--optimize=2 \
+		--skip-build \
+		--root=$RPM_BUILD_ROOT
+cd ../..
+%endif
 
 %if %{_lib} != "lib"
 	# Fix java plugin install path on 64-bit archs
@@ -705,6 +739,13 @@ exit 0
 %defattr(644,root,root,755)
 %attr(755,root,root) %{py_sitedir}/brlapi.so
 %{py_sitedir}/Brlapi-%{brlapi_ver}-py*.egg-info
+
+%if %{with python3}
+%files -n python3-brlapi
+%defattr(644,root,root,755)
+%attr(755,root,root) %{py3_sitedir}/brlapi.cpython-*.so
+%{py3_sitedir}/Brlapi-%{brlapi_ver}-py*.egg-info
+%endif
 %endif
 
 %if %{with tcl}
