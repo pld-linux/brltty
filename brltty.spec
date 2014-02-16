@@ -20,19 +20,19 @@
 %bcond_without	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 #
-%define		brlapi_ver	0.6.0
+%define		brlapi_ver	0.6.1
 #
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	4.5
-Release:	4
+Version:	5.0
+Release:	1
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
-Source0:	http://mielke.cc/brltty/releases/%{name}-%{version}.tar.gz
-# Source0-md5:	7b52fa7746fed41ed344a1f75ce55951
-Patch0:		%{name}-stat.patch
+Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
+# Source0-md5:	44c71a973424658557b931f703017481
+Patch0:		%{name}-format.patch
 Patch1:		%{name}-java.patch
 Patch2:		%{name}-speech-dispatcher.patch
 Patch3:		%{name}-python.patch
@@ -56,11 +56,12 @@ BuildRequires:	libicu-devel
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 BuildRequires:	pkgconfig
-%{?with_python:BuildRequires:	python-Pyrex}
+%{?with_python:BuildRequires:	python-Cython}
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
 %{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel >= 0.8}
-%{?with_tcl:BuildRequires:	tcl-devel}
+BuildRequires:	tar >= 1:1.22
+%{?with_tcl:BuildRequires:	tcl-devel >= 8.5}
 %if %{with x}
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXaw-devel
@@ -68,6 +69,7 @@ BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	xorg-lib-libXtst-devel
 %endif
+BuildRequires:	xz
 #%{?with_mikropuhe:BuildRequires:	Mikropuhe-devel (-lmikropuhe <mpwrfile.h>)}
 #%{?with_swift:BuildRequires:	Swift-devel (-lswift <swift.h>)}
 #%{?with_theta:BuildRequires:	Theta-devel (-ltheta <theta.h>)}
@@ -283,6 +285,8 @@ install -d $RPM_BUILD_ROOT/usr/lib/tmpfiles.d
 cat >$RPM_BUILD_ROOT/usr/lib/tmpfiles.d/brltty.conf <<EOF
 d /var/run/brltty 0755 root root -
 EOF
+
+%find_lang %{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -566,7 +570,7 @@ exit 0
 %post	-n brlapi -p /sbin/ldconfig
 %postun	-n brlapi -p /sbin/ldconfig
 
-%files
+%files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO}
 %doc doc/{Bindings,Bootdisks,Drivers,Patches,Tables,README,nsistrings.txt}
@@ -576,6 +580,7 @@ exit 0
 %attr(755,root,root) %{_bindir}/brltty-install
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
+%attr(755,root,root) %{_bindir}/eutp
 %attr(755,root,root) %{_bindir}/vstp
 %{?with_x:%attr(755,root,root) %{_bindir}/xbrlapi}
 %dir %{_libdir}/brltty
@@ -601,6 +606,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyblt.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybmb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybmd.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybmm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybmn.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybmt.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybnp.so
@@ -640,8 +646,14 @@ exit 0
 %dir /var/lib/BrlAPI
 %dir /var/run/brltty
 %{_mandir}/man1/brltty.1*
+%{_mandir}/man1/eutp.1*
 %{_mandir}/man1/vstp.1*
 %{?with_x:%{_mandir}/man1/xbrlapi.1*}
+
+%if %{with x}
+# gdm autostart - subpackage?
+#%{_datadir}/gdm/greeter/autostart/xbrlapi.desktop
+%endif
 
 %files -n brlapi
 %defattr(644,root,root,755)

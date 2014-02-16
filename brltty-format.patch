@@ -1,0 +1,11 @@
+--- brltty-5.0/Programs/async_io.c.orig	2014-01-27 19:39:26.000000000 +0100
++++ brltty-5.0/Programs/async_io.c	2014-02-16 16:27:20.807854232 +0100
+@@ -193,7 +193,7 @@
+ logOperation (const OperationEntry *operation, void *callback) {
+   logSymbol(LOG_CATEGORY(ASYNC_EVENTS),
+             callback,
+-            operation->function->methods->functionName);
++            "%s", operation->function->methods->functionName);
+ }
+ 
+ #ifdef __MINGW32__
