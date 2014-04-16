@@ -28,7 +28,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	5.1
-Release:	1
+Release:	2
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
@@ -317,6 +317,9 @@ install -d $RPM_BUILD_ROOT/usr/lib/tmpfiles.d
 cat >$RPM_BUILD_ROOT/usr/lib/tmpfiles.d/brltty.conf <<EOF
 d /var/run/brltty 0755 root root -
 EOF
+
+# no sign in source wheter it is zh_CN or zh_TW so just remove it
+%{__rm} -r $RPM_BUILD_ROOT%{_localedir}/zh
 
 %find_lang %{name}
 
