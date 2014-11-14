@@ -21,18 +21,18 @@
 %bcond_without	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 #
-%define		brlapi_ver	0.6.2
+%define		brlapi_ver	0.6.3
 #
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	5.1
-Release:	5
+Version:	5.2
+Release:	1
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	938769dd1c3c3baf0d6dfafeb11581ec
+# Source0-md5:	b484343461b5a45f95fedfb21d1ceca3
 Patch0:		%{name}-java.patch
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
@@ -608,11 +608,10 @@ exit 0
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO}
-%doc doc/{Bindings,Bootdisks,Drivers,Patches,Tables,README,nsistrings.txt}
+%doc doc/{Bindings,Bootdisks,Drivers,Patches,Tables,README}
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-config
 %attr(755,root,root) %{_bindir}/brltty-ctb
-%attr(755,root,root) %{_bindir}/brltty-install
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
 %attr(755,root,root) %{_bindir}/eutp
@@ -633,6 +632,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybhd.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhw.so
