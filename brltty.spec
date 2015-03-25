@@ -18,7 +18,7 @@
 %bcond_with	swift			# Swift synthesizer driver [commercial, from Cepstral]
 %bcond_with	theta			# Theta synthesizer driver [commercial, from Cepstral]
 %bcond_with	viavoice		# IBM ViaVoice synthesizer driver [commercial]
-%bcond_without	at_spi			# AtSpi screen driver
+%bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 #
 %define		brlapi_ver	0.6.3
@@ -28,7 +28,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	5.2
-Release:	2
+Release:	3
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
