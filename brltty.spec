@@ -28,7 +28,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	5.2
-Release:	4
+Release:	5
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
@@ -292,6 +292,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %{__make} -j1 install \
 	OCAML_INSTALL_TARGET=install-without-findlib
+
+# findlib-specific, useless in rpm
+%{__rm} $RPM_BUILD_ROOT%{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so.owner
 
 %if %{with python3}
 cd Bindings/Python
@@ -724,7 +727,6 @@ exit 0
 %files -n ocaml-brlapi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so
-%{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so.owner
 
 %files -n ocaml-brlapi-devel
 %defattr(644,root,root,755)
