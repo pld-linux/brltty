@@ -274,7 +274,7 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 
 %if %{with python3}
 cd Bindings/Python
-%{__python3} setup.py build \
+%py3_build \
 	-b build-3
 cd ../..
 %endif
