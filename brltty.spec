@@ -37,6 +37,7 @@ Patch0:		%{name}-java.patch
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 URL:		http://mielke.cc/brltty/
+BuildRequires:	rpmbuild(macros) >= 1.710
 BuildRequires:	alsa-lib-devel
 %{?with_at_spi:BuildRequires:	at-spi-devel}
 BuildRequires:	autoconf >= 2.62
