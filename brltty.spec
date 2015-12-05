@@ -28,7 +28,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	5.2
-Release:	8
+Release:	9
 Group:		Daemons
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
@@ -273,10 +273,15 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 
 %{__make} -j1
 
+%if %{with python}
+cd Bindings/Python
+%py_build
+cd ../..
+%endif
+
 %if %{with python3}
 cd Bindings/Python
-%py3_build \
-	-b build-3
+%py3_build
 cd ../..
 %endif
 
@@ -297,15 +302,15 @@ rm -rf $RPM_BUILD_ROOT
 # findlib-specific, useless in rpm
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so.owner
 
+%if %{with python}
+cd Bindings/Python
+%py_install
+cd ../..
+%endif
+
 %if %{with python3}
 cd Bindings/Python
-%{__python3} setup.py \
-	build \
-		-b build-3 \
-	install \
-		--optimize=2 \
-		--skip-build \
-		--root=$RPM_BUILD_ROOT
+%py3_install
 cd ../..
 %endif
 
