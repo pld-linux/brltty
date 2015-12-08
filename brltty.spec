@@ -20,29 +20,28 @@
 %bcond_with	viavoice		# IBM ViaVoice synthesizer driver [commercial]
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
-#
+
 %define		brlapi_ver	0.6.3
-#
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	5.2
-Release:	9
-Group:		Daemons
+Release:	10
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
+Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
 # Source0-md5:	b484343461b5a45f95fedfb21d1ceca3
 Patch0:		%{name}-java.patch
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 URL:		http://mielke.cc/brltty/
-BuildRequires:	rpmbuild(macros) >= 1.710
 BuildRequires:	alsa-lib-devel
 %{?with_at_spi:BuildRequires:	at-spi-devel}
 BuildRequires:	autoconf >= 2.62
 BuildRequires:	automake
 BuildRequires:	bison
+BuildRequires:	rpmbuild(macros) >= 1.710
 # just headers
 BuildRequires:	bluez-libs-devel
 %{?with_at_spi2:BuildRequires:	dbus-devel >= 1.0}
@@ -71,11 +70,11 @@ BuildRequires:	xorg-lib-libXext-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	xorg-lib-libXtst-devel
 %endif
-BuildRequires:	xz
 #%{?with_mikropuhe:BuildRequires:	Mikropuhe-devel (-lmikropuhe <mpwrfile.h>)}
 #%{?with_swift:BuildRequires:	Swift-devel (-lswift <swift.h>)}
 #%{?with_theta:BuildRequires:	Theta-devel (-ltheta <theta.h>)}
 #%{?with_viavoice:BuildRequires:	ViaVoice-devel (-libmeci50 <eci.h>)}
+BuildRequires:	xz
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -158,14 +157,17 @@ Ten pakiet zawiera statyczną wersję biblioteki BrlAPI.
 Summary:	BrlAPI documentation
 Summary(pl.UTF-8):	Documentacja BrlAPI
 Group:		Documentation
+%if "%{_rpmversion}" >= "5"
+BuildArch:	noarch
+%endif
 
 %description -n brlapi-apidocs
-Documentation for BrlAPI in HTML format generated from brltty
-sources by doxygen.
+Documentation for BrlAPI in HTML format generated from brltty sources
+by doxygen.
 
 %description -n brlapi-apidocs -l pl.UTF-8
-Dokumentacja BrlAPI w formacie HTML generowane ze
-źrodeł brltty przez doxygen.
+Dokumentacja BrlAPI w formacie HTML generowane ze źrodeł brltty przez
+doxygen.
 
 %package -n java-brlapi
 Summary:	BrlAPI library for Java
@@ -686,7 +688,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
-/usr/lib/tmpfiles.d/brltty.conf
+%{systemdtmpfilesdir}/brltty.conf
 %dir /var/lib/BrlAPI
 %dir /var/run/brltty
 %{_mandir}/man1/brltty.1*
