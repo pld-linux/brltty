@@ -21,24 +21,24 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.6.3
+%define		brlapi_ver	0.6.4
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	5.2
-Release:	10
+Version:	5.3
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	b484343461b5a45f95fedfb21d1ceca3
-Patch0:		%{name}-java.patch
+# Source0-md5:	19fbcb1fefc42cea81f560de0a1f539f
+Patch0:		%{name}-format.patch
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 URL:		http://mielke.cc/brltty/
 BuildRequires:	alsa-lib-devel
 %{?with_at_spi:BuildRequires:	at-spi-devel}
-BuildRequires:	autoconf >= 2.62
+BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake
 BuildRequires:	bison
 BuildRequires:	rpmbuild(macros) >= 1.710
@@ -621,10 +621,13 @@ exit 0
 %doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO}
 %doc doc/{Bindings,Bootdisks,Drivers,Patches,Tables,README}
 %attr(755,root,root) %{_bindir}/brltty
+%attr(755,root,root) %{_bindir}/brltty-atb
 %attr(755,root,root) %{_bindir}/brltty-config
 %attr(755,root,root) %{_bindir}/brltty-ctb
+%attr(755,root,root) %{_bindir}/brltty-ktb
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
+%attr(755,root,root) %{_bindir}/brltty-tune
 %attr(755,root,root) %{_bindir}/eutp
 %attr(755,root,root) %{_bindir}/vstp
 %{?with_x:%attr(755,root,root) %{_bindir}/xbrlapi}
@@ -635,6 +638,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybba.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbc.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbd.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybbg.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbn.so
