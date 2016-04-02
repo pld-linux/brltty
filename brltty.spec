@@ -27,7 +27,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	5.3.1
-Release:	1
+Release:	2
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
@@ -284,14 +284,6 @@ cd Bindings/Python
 %py3_build
 cd ../..
 %endif
-
-directory="doc"
-mkdir -p "$directory"
-for file in `find . \( -path "./$directory" -o -path ./Documents \) -prune -o \( -name 'README*' -o -name '*.txt' -o -name '*.html' -o -name '*.sgml' -o \( -path "./Bootdisks/*" -type f -perm +ugo=x \) \) -print`
-do
-	mkdir -p "$directory/${file%/*}"
-	cp -rp "$file" "$directory/$file"
-done
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -617,7 +609,6 @@ exit 0
 %files -f %{name}.lang
 %defattr(644,root,root,755)
 %doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO}
-%doc doc/{Bindings,Bootdisks,Drivers,Patches,Tables,README}
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-atb
 %attr(755,root,root) %{_bindir}/brltty-config
