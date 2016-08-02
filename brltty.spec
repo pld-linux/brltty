@@ -21,17 +21,17 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.6.4
+%define		brlapi_ver	0.6.5
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	5.3.1
-Release:	3
+Version:	5.4
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	7835871c911effd286040225bf5355f8
+# Source0-md5:	cfedd365e6237d762ad8c35b4f6fb361
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 URL:		http://mielke.cc/brltty/
