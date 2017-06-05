@@ -21,17 +21,17 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.6.5
+%define		brlapi_ver	0.6.6
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	5.4
-Release:	6
+Version:	5.5
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	cfedd365e6237d762ad8c35b4f6fb361
+# Source0-md5:	cd2fb2158b9fc85b23c4225d1d067df6
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 Patch3:		make.patch
@@ -315,10 +315,10 @@ cd ../..
 	%{__mv} $RPM_BUILD_ROOT%{_prefix}/{lib,%{_lib}}/java/libbrlapi_java.so
 %endif
 
-install Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
+cp -p Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
-install -d $RPM_BUILD_ROOT/usr/lib/tmpfiles.d
-cat >$RPM_BUILD_ROOT/usr/lib/tmpfiles.d/brltty.conf <<EOF
+install -d $RPM_BUILD_ROOT%{systemdtmpfilesdir}
+cat >$RPM_BUILD_ROOT%{systemdtmpfilesdir}/brltty.conf <<EOF
 d /var/run/brltty 0755 root root -
 EOF
 
@@ -695,7 +695,10 @@ exit 0
 %if %{with x}
 # gdm autostart - subpackage?
 #%{_datadir}/gdm/greeter/autostart/xbrlapi.desktop
+/etc/X11/Xsession.d/60xbrlapi
+%{_datadir}/metainfo/org.a11y.brltty.metainfo.xml
 %endif
+%{_datadir}/polkit-1/actions/org.a11y.brlapi.policy
 
 %files -n brlapi
 %defattr(644,root,root,755)

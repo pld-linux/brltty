@@ -1,14 +1,16 @@
 --- brltty-4.5/configure.ac.orig	2013-03-27 23:54:58.000000000 +0100
 +++ brltty-4.5/configure.ac	2013-04-07 19:04:31.636980920 +0200
 @@ -1516,7 +1516,7 @@
-    BRLTTY_SPEECH_DRIVER([fv], [Festival])
-    BRLTTY_SPEECH_DRIVER([gs], [GenericSay])
-    BRLTTY_IF_PACKAGE([Mikropuhe], [mikropuhe], [mpwrfile.h], [BRLTTY_IF_PTHREADS([BRLTTY_SPEECH_DRIVER([mp], [Mikropuhe], [-L$(MPLINUX_ROOT) -lmplinux])])])
--   BRLTTY_IF_PACKAGE([speech-dispatcher], [speechd], [include/libspeechd.h], [BRLTTY_SPEECH_DRIVER([sd], [SpeechDispatcher], [-L$(SPEECHD_ROOT)/lib -lspeechd])])
-+   BRLTTY_IF_PACKAGE([speech-dispatcher], [speechd], [include/speech-dispatcher/libspeechd.h], [BRLTTY_SPEECH_DRIVER([sd], [SpeechDispatcher], [-lspeechd])])
-    BRLTTY_IF_PACKAGE([Swift], [swift], [include/swift.h], [BRLTTY_SPEECH_DRIVER([sw], [Swift], [-L$(SWIFT_ROOT)/lib -lswift -lm])])
-    BRLTTY_IF_PACKAGE([Theta], [theta], [include/theta.h], [BRLTTY_SPEECH_DRIVER([th], [Theta], [-L$(THETA_ROOT)/lib -ltheta])])
-    BRLTTY_IF_PACKAGE([ViaVoice], [viavoice], [include/eci.h], [BRLTTY_SPEECH_DRIVER([vv], [ViaVoice], [-L$(VIAVOICE_ROOT)/lib -libmeci50])])
+       ])
+    ])
+ 
+-   BRLTTY_IF_PACKAGE([speech-dispatcher], [speechd], [include/libspeechd.h], [dnl
++   BRLTTY_IF_PACKAGE([speech-dispatcher], [speechd], [include/speech-dispatcher/libspeechd.h], [dnl
+       BRLTTY_SPEECH_DRIVER([sd], [SpeechDispatcher])
+    ], [include], [lib], [speechd])
+ 
+    BRLTTY_IF_PACKAGE([Swift], [swift], [include/swift.h], [dnl
+       BRLTTY_SPEECH_DRIVER([sw], [Swift], [-L$(SWIFT_ROOT)/lib -lswift -lm])
 #--- brltty-4.5/Drivers/Speech/SpeechDispatcher/Makefile.in.orig	2013-03-27 23:51:36.000000000 +0100
 #+++ brltty-4.5/Drivers/Speech/SpeechDispatcher/Makefile.in	2013-04-07 19:41:55.110267490 +0200
 #@@ -25,5 +25,5 @@
