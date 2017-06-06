@@ -27,7 +27,7 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	5.5
-Release:	1
+Release:	2
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
@@ -695,7 +695,7 @@ exit 0
 %if %{with x}
 # gdm autostart - subpackage?
 #%{_datadir}/gdm/greeter/autostart/xbrlapi.desktop
-/etc/X11/Xsession.d/60xbrlapi
+#/etc/X11/Xsession.d/60xbrlapi
 %{_datadir}/metainfo/org.a11y.brltty.metainfo.xml
 %endif
 %{_datadir}/polkit-1/actions/org.a11y.brlapi.policy
