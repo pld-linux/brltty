@@ -1,0 +1,10 @@
+--- brltty-5.5/Programs/brlapi_client.c~	2017-04-19 00:35:13.000000000 +0200
++++ brltty-5.5/Programs/brlapi_client.c	2019-04-15 13:46:45.074072750 +0200
+@@ -28,6 +28,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <sys/stat.h>
++#include <sys/sysmacros.h>
+ #include <locale.h>
+ 
+ #ifndef __MINGW32__

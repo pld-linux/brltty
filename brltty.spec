@@ -35,6 +35,7 @@ Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 Patch3:		make.patch
+Patch4:		%{name}-glibc25.patch
 URL:		http://mielke.cc/brltty/
 BuildRequires:	alsa-lib-devel
 %{?with_at_spi:BuildRequires:	at-spi-devel}
@@ -255,6 +256,7 @@ Biblioteka BrlAPI dla Tcl.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 %{__autoconf}
