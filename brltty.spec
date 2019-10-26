@@ -11,7 +11,9 @@
 %bcond_without	x			# X11-based utilities
 %bcond_without	gpm			# mouse tracking via GPM
 %bcond_without	libbraille		# libbraille Braille driver
+%bcond_without	liblouis		# liblouis in-line contracted Braille support
 %bcond_without	espeak			# eSpeak synthesizer driver
+%bcond_without	espeak_ng		# eSpeak-NG synthesizer driver
 %bcond_without	flite			# Flite synthesizer driver
 %bcond_with	mikropuhe		# Mikropuhe synthesizer driver [commercial, Finnish]
 %bcond_without	speech_dispatcher	# Speech Dispatcher synthesizer driver
@@ -21,17 +23,17 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.6.6
+%define		brlapi_ver	0.7.0
 %include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	5.5
-Release:	5
+Version:	6.0
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	cd2fb2158b9fc85b23c4225d1d067df6
+# Source0-md5:	feca8c2f22b13a4c67b1366191033c0e
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 Patch3:		make.patch
@@ -42,25 +44,30 @@ BuildRequires:	alsa-lib-devel
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake
 BuildRequires:	bison
-BuildRequires:	rpmbuild(macros) >= 1.710
 # just headers
 BuildRequires:	bluez-libs-devel
 %{?with_at_spi2:BuildRequires:	dbus-devel >= 1.0}
 %{?with_apidocs:BuildRequires:	doxygen}
 %{?with_espeak:BuildRequires:	espeak-devel}
+%{?with_espeak_ng:BuildRequires:	espeak-ng-devel}
+BuildRequires:	expat-devel
 %{?with_flite:BuildRequires:	flite-devel}
+BuildRequires:	gettext-tools
 %{?with_gpm:BuildRequires:	gpm-devel}
 %{?with_java:BuildRequires:	jdk}
 %{?with_java:BuildRequires:	jpackage-utils}
 %{?with_libbraille:BuildRequires:	libbraille-devel}
 BuildRequires:	libicu-devel
+%{?with_liblouis:BuildRequires:	liblouis-devel}
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 BuildRequires:	pkgconfig
+BuildRequires:	polkit-devel
 %{?with_python:BuildRequires:	python-Cython}
 %{?with_python3:BuildRequires:	python3-Cython}
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
+BuildRequires:	rpmbuild(macros) >= 1.710
 %{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel >= 0.8}
 BuildRequires:	systemd-devel
 BuildRequires:	tar >= 1:1.22
@@ -255,7 +262,7 @@ Biblioteka BrlAPI dla Tcl.
 %setup -q
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
+#patch3 -p1
 %patch4 -p1
 
 %build
@@ -266,11 +273,14 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 	--with-install-root="$RPM_BUILD_ROOT" \
 	%{!?with_libbraille:--without-libbraille} \
 	%{!?with_espeak:--without-espeak} \
+	%{!?with_espeak_ng:--without-espeak_ng} \
 	%{!?with_flite:--without-flite} \
 	%{!?with_speech_dispatcher:--without-speechd} \
 	%{!?with_ocaml:--disable-caml-bindings} \
 	%{!?with_gpm:--disable-gpm} \
 	%{!?with_java:--disable-java-bindings} \
+	%{!?with_liblouis:--disable-liblouis} \
+	--enable-lisp-bindings \
 	%{!?with_python:--disable-python-bindings} \
 	%{!?with_tcl:--disable-tcl-bindings} \
 	%{!?with_x:--disable-x} \
@@ -293,7 +303,7 @@ cd ../..
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} -j1 install \
+%{__make} -j1 install install-appstream \
 	OCAML_INSTALL_TARGET=install-without-findlib
 
 # findlib-specific, useless in rpm
@@ -324,8 +334,9 @@ cat >$RPM_BUILD_ROOT%{systemdtmpfilesdir}/brltty.conf <<EOF
 d /var/run/brltty 0755 root root -
 EOF
 
-# no sign in source wheter it is zh_CN or zh_TW so just remove it
-%{__rm} -r $RPM_BUILD_ROOT%{_localedir}/zh
+# no sign in source wheter it is zh_CN or zh_TW
+# but seems to contain Traditional Chinese characters
+%{__mv} $RPM_BUILD_ROOT%{_localedir}/{zh,zh_TW}
 
 %find_lang %{name}
 
@@ -617,8 +628,12 @@ exit 0
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-atb
 %attr(755,root,root) %{_bindir}/brltty-config
+%attr(755,root,root) %{_bindir}/brltty-cldr
 %attr(755,root,root) %{_bindir}/brltty-ctb
 %attr(755,root,root) %{_bindir}/brltty-ktb
+%attr(755,root,root) %{_bindir}/brltty-lscmds
+%attr(755,root,root) %{_bindir}/brltty-lsinc
+%attr(755,root,root) %{_bindir}/brltty-morse
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
 %attr(755,root,root) %{_bindir}/brltty-tune
@@ -645,6 +660,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhw.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybic.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybir.so
 %{?with_libbraille:%attr(755,root,root) %{_libdir}/brltty/libbrlttyblb.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyblt.so
@@ -669,6 +685,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysal.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysbl.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyscb.so
+%{?with_espeak_ng:%attr(755,root,root) %{_libdir}/brltty/libbrlttysen.so}
 %{?with_espeak:%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so}
 %{?with_flite:%attr(755,root,root) %{_libdir}/brltty/libbrlttysfl.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
@@ -705,7 +722,7 @@ exit 0
 %files -n brlapi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libbrlapi.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.6
+%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.7
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
