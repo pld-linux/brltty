@@ -24,7 +24,6 @@
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
 %define		brlapi_ver	0.7.0
-%include	/usr/lib/rpm/macros.java
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
