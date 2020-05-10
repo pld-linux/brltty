@@ -11,15 +11,6 @@
  
     BRLTTY_IF_PACKAGE([Swift], [swift], [include/swift.h], [dnl
        BRLTTY_SPEECH_DRIVER([sw], [Swift], [-L$(SWIFT_ROOT)/lib -lswift -lm])
-#--- brltty-4.5/Drivers/Speech/SpeechDispatcher/Makefile.in.orig	2013-03-27 23:51:36.000000000 +0100
-#+++ brltty-4.5/Drivers/Speech/SpeechDispatcher/Makefile.in	2013-04-07 19:41:55.110267490 +0200
-#@@ -25,5 +25,5 @@
-# include $(SRC_TOP)speech.mk
-# 
-# speech.$O:
-#-	$(CC) $(SPK_CFLAGS) -I$(SPEECHD_ROOT)/include -c $(SRC_DIR)/speech.c
-#+	$(CC) $(SPK_CFLAGS) -I$$(pkg-config --cflags speech-dispatcher) -c $(SRC_DIR)/speech.c
-# 
 --- brltty-4.5/Drivers/Speech/SpeechDispatcher/speech.c.orig	2013-03-27 23:51:36.000000000 +0100
 +++ brltty-4.5/Drivers/Speech/SpeechDispatcher/speech.c	2013-04-07 19:56:47.340248894 +0200
 @@ -38,7 +38,7 @@

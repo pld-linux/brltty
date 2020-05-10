@@ -1,5 +1,3 @@
-# TODO:
-#	- what is that huge %post script?
 #
 # Conditional build:
 %bcond_without	apidocs			# documentation generated with doxygen
@@ -23,22 +21,23 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.7.0
+%define		brlapi_ver	0.8.0
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	6.0
-Release:	4
+Version:	6.1
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	feca8c2f22b13a4c67b1366191033c0e
+# Source0-md5:	ddcdd8c093f94c68885a39508af08d92
 Patch1:		%{name}-speech-dispatcher.patch
 Patch2:		%{name}-python.patch
 Patch4:		%{name}-glibc25.patch
 URL:		http://mielke.cc/brltty/
 BuildRequires:	alsa-lib-devel
 %{?with_at_spi:BuildRequires:	at-spi-devel}
+%{?with_at_spi2:BuildRequires:	at-spi2-core-devel >= 2.0}
 BuildRequires:	autoconf >= 2.64
 BuildRequires:	automake
 BuildRequires:	bison
@@ -51,6 +50,7 @@ BuildRequires:	bluez-libs-devel
 BuildRequires:	expat-devel
 %{?with_flite:BuildRequires:	flite-devel}
 BuildRequires:	gettext-tools
+%{?with_at_spi2:BuildRequires:	glib2-devel >= 2.0}
 %{?with_gpm:BuildRequires:	gpm-devel}
 %{?with_java:BuildRequires:	jdk}
 %{?with_java:BuildRequires:	jpackage-utils}
@@ -59,13 +59,15 @@ BuildRequires:	libicu-devel
 %{?with_liblouis:BuildRequires:	liblouis-devel}
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
+BuildRequires:	pcre2-32-devel
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel
 %{?with_python:BuildRequires:	python-Cython}
 %{?with_python3:BuildRequires:	python3-Cython}
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
-BuildRequires:	rpmbuild(macros) >= 1.710
+BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	sed >= 4.0
 %{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel >= 0.8}
 BuildRequires:	systemd-devel
 BuildRequires:	tar >= 1:1.22
@@ -74,6 +76,7 @@ BuildRequires:	tar >= 1:1.22
 BuildRequires:	xorg-lib-libX11-devel
 BuildRequires:	xorg-lib-libXaw-devel
 BuildRequires:	xorg-lib-libXext-devel
+BuildRequires:	xorg-lib-libXfixes-devel
 BuildRequires:	xorg-lib-libXt-devel
 BuildRequires:	xorg-lib-libXtst-devel
 %endif
@@ -262,7 +265,10 @@ Biblioteka BrlAPI dla Tcl.
 %patch2 -p1
 %patch4 -p1
 
+%{__sed} -i -e '1s,/usr/bin/python$,%{__python},' Tables/Contraction/latex-access.ctb
+
 %build
+%{__aclocal} -I m4
 %{__autoconf}
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
@@ -324,6 +330,7 @@ cd ../..
 	%{__mv} $RPM_BUILD_ROOT%{_prefix}/{lib,%{_lib}}/java/libbrlapi_java.so
 %endif
 
+install Bootdisks/bp2cf $RPM_BUILD_ROOT%{_bindir}/brltty-bp2cf
 cp -p Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
 install -d $RPM_BUILD_ROOT%{systemdtmpfilesdir}
@@ -353,8 +360,6 @@ rm -rf $RPM_BUILD_ROOT
 rm -f "%{_sysconfdir}/brltty.conf.rpmnew"
 
 %post
-# The post-install scriptlet.
-
 # If BRLTTY's boot parameter has been specified then update the just installed
 # configuration file template to reflect the options supplied thereby.
 
@@ -365,256 +370,7 @@ new="${file}.rpmnew"
 [ -f "${new}" ] && file="${new}"
 
 # Update the configuration file template via the Bootdisks/bp2cf script.
-# Include it right within this scriptlet so that it needn't be installed.
-# Imbed it within a subshell to ensure that it won't impact this scriptlet.
-(
-	# First, set bp2cf's command line arguments.
-	set -- -u -f "${file}"
-
-#!/bin/sh
-###############################################################################
-# BRLTTY - A background process providing access to the Linux console (when in
-#          text mode) for a blind person using a refreshable Braille display.
-#
-# Copyright (C) 1995-2003 by The BRLTTY Team. All rights reserved.
-#
-# BRLTTY comes with ABSOLUTELY NO WARRANTY.
-#
-# This is free software, placed under the terms of the
-# GNU General Public License, as published by the Free Software
-# Foundation.  Please see the file COPYING for details.
-#
-# Web Page: http://mielke.cc/brltty/
-#
-# This software is maintained by Dave Mielke <dave@mielke.cc>.
-###############################################################################
-
-# Convert the boot parameter to configuration file directives.
-# If /proc is mounted then use the brltty= boot parameter in /proc/cmdline.
-# If /proc is not mounted then use the brltty environment variable.
-# Invoke with -h for usage information.
-
-programName="${0##*/}"
-programMessage()
-{
-	echo 2>&1 "${programName}: ${1}"
-}
-syntaxError()
-{
-	programMessage "${1}"
-	exit 2
-}
-internalError()
-{
-	programMessage "${1}"
-	exit 3
-}
-
-configurationFile=""
-requestedAction=create
-deviceTranslation=none
-requestedParameter=""
-OPTIND=1
-while getopts ":f:cundop:h" option
-do
-	case "${option}" in
-	    f) configurationFile="${OPTARG}";;
-	    c) requestedAction=create;;
-	    u) requestedAction=update;;
-	    n) deviceTranslation=none;;
-	    d) deviceTranslation=devfs;;
-	    o) deviceTranslation=old;;
-	    p) requestedParameter="${OPTARG}";;
-	    h)
-		cat <<EOF
-Usage: ${programName} [option ...]
--f file  The configuration file to create/update.
--c       Create the configuration file (write to stdout if no -f).
--u       Update the configuration file (copying from stdin to stdout if no -f).
--n       Do not translate device paths.
--d       Do old-style to devfs device path translation.
--o       Do devfs to old-style device path translation.
--p [driver][,[device][,[table]]]
-         Explicitly specify the boot parameter.
--h       Display this usage summary.
-EOF
-		exit 0
-		;;
-	    \?) syntaxError "unknown option: -${OPTARG}";;
-	    :) syntaxError "missing value: -${OPTARG}";;
-	    *) internalError "unimplemented option: -${option}";;
-	esac
-done
-shift "`expr $OPTIND - 1`"
-[ "${#}" -eq 0 ] || syntaxError "too many parameters."
-
-case "${requestedAction}" in
-    create)
-	putConfigurationLine()
-	{
-		echo "${1}" || exit 4
-	}
-	startConfigurationFile()
-	{
-		[ -n "${configurationFile}" ] && exec >"${configurationFile}"
-		putConfigurationLine "`makeHeaderLine Created`"
-		putConfigurationLine "`makeParameterLine`"
-		putConfigurationLine ""
-	}
-	putConfigurationDirective()
-	{
-		putConfigurationLine "${1} ${2}"
-	}
-	finalizeConfigurationFile()
-	{
-		:
-	}
-	;;
-    update)
-	putSedCommand()
-	{
-		sedScript="${sedScript}
-${1}"
-	}
-	startConfigurationFile()
-	{
-		if [ -n "${configurationFile}" ]; then
-			[ -e "${configurationFile}" ] || syntaxError "file not found: ${configurationFile}"
-			[ -f "${configurationFile}" ] || syntaxError "not a file: ${configurationFile}"
-			[ -r "${configurationFile}" ] || syntaxError "file not readable: ${configurationFile}"
-			[ -w "${configurationFile}" ] || syntaxError "file not writable: ${configurationFile}"
-			outputFile="${configurationFile}.new"
-			exec <"${configurationFile}" >"${outputFile}"
-		fi
-		sedScript=""
-		putSedCommand "1i\\
-`makeHeaderLine Updated`\\
-`makeParameterLine`\\
-"
-	}
-	putConfigurationDirective()
-	{
-		value="`echo "${2}" | sed -e 's%\\([/\\]\\)%\\\\\\1%g'`"
-		putSedCommand "/^ *#\\(${1} .*\\)/s//\\1/"
-		putSedCommand "/^ *\\(${1}\\) .*/s//\\1 ${value}/"
-	}
-	finalizeConfigurationFile()
-	{
-		sed -e "${sedScript}"
-		[ -n "${outputFile}" ] && mv -f "${outputFile}" "${configurationFile}"
-	}
-	;;
-    *) internalError "unimplemented action: ${requestedAction}";;
-esac
-
-translateDevice_none()
-{
-	:
-}
-translateDevice_devfs()
-{
-	minor="${device#ttyS}"
-	if [ "${minor}" != "${device}" ]; then
-		device="tts/${minor}"
-		return 0
-	fi
-	minor="${device#lp}"
-	if [ "${minor}" != "${device}" ]; then
-		device="printers/${minor}"
-		return 0
-	fi
-	programMessage "unsupported old-style device: ${device}"
-}
-translateDevice_old()
-{
-	major="${device%%/*}"
-	if [ "${major}" != "${device}" ]; then
-		minor="${device#*/}"
-		case "${major}" in
-		    tts) devfs="ttyS${minor}";;
-		    printers) devfs="lp${minor}";;
-		esac
-	fi
-	if [ -n "${devfs}" ]; then
-		device="${devfs}"
-	else
-		programMessage "unsupported devfs device: ${device}"
-	fi
-}
-
-makeHeaderLine()
-{
-	echo "# ${1} by brltty-bp2cf`date +' on %Y-%m-%d at %H:%M:%S %Z (UTC%z)'`."
-}
-makeParameterLine()
-{
-	echo "# Boot Parameter:${bootParameter}"
-}
-putConfigurationFile()
-{
-	startConfigurationFile
-	[ -n "${brailleDriver}" ] && putConfigurationDirective "braille-driver" "${brailleDriver}"
-	[ -n "${brailleDevice}" ] && {
-	device="`echo "${brailleDevice}" | sed -e 's%//*%/%g' -e 's%^/dev/%%'`"
-	if [ "${device#/}" = "${device}" ]; then
-		translateDevice_${deviceTranslation}
-	fi
-	putConfigurationDirective "braille-device" "${device}"
-	}
-	[ -n "${textTable}" ] && putConfigurationDirective "text-table" "${textTable}"
-	finalizeConfigurationFile
-}
-parseBootParameter()
-{
-	bootParameter="${bootParameter} ${1}"
-	number=1
-	while [ "${number}" -le 3 ]; do
-		cut="cut -d, -f${number}"
-		[ "${number}" -gt 1 ] && cut="${cut} -s"
-		operand="`echo ${1} | ${cut}`"
-		if [ -n "${operand}" ]; then
-			case "${number}" in
-			    1) brailleDriver="${operand}";;
-			    2) brailleDevice="${operand}";;
-			    3) textTable="${operand}";;
-			esac
-		fi
-		number="`expr ${number} + 1`"
-	done
-}
-putBootParameter()
-{
-	parseBootParameter "${1}"
-	putConfigurationFile
-}
-parseBootCommand()
-{
-	found=false
-	while [ "${#}" -gt 0 ]; do
-		case "${1}" in
-		    "brltty="*)
-			found=true
-			parseBootParameter "${1#*=}"
-			;;
-		esac
-		shift
-	done
-	"${found}" && putConfigurationFile
-}
-
-brailleDriver=""
-brailleDevice=""
-textTable=""
-bootCommandFile="/proc/cmdline"
-if [ -n "${requestedParameter}" ]; then
-	putBootParameter "${requestedParameter}"
-elif [ -f "${bootCommandFile}" ]; then
-	parseBootCommand `cat "${bootCommandFile}"`
-elif [ -n "${brltty}" ]; then
-	putBootParameter "${brltty}"
-fi
-exit 0
-)
+%{_bindir}/brltty-bp2cf -u -f "${file}" >/dev/null 2>&1 || :
 
 %post	-n brlapi -p /sbin/ldconfig
 %postun	-n brlapi -p /sbin/ldconfig
@@ -624,7 +380,9 @@ exit 0
 %doc Documents/{Manual-BRLTTY/English/BRLTTY*,ChangeLog,HISTORY,TODO}
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-atb
+%attr(755,root,root) %{_bindir}/brltty-bp2cf
 %attr(755,root,root) %{_bindir}/brltty-config
+%attr(755,root,root) %{_bindir}/brltty-clip
 %attr(755,root,root) %{_bindir}/brltty-cldr
 %attr(755,root,root) %{_bindir}/brltty-ctb
 %attr(755,root,root) %{_bindir}/brltty-ktb
@@ -650,6 +408,7 @@ exit 0
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybbn.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybce.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybcn.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
@@ -719,7 +478,7 @@ exit 0
 %files -n brlapi
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libbrlapi.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.7
+%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.8
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
