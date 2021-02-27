@@ -167,9 +167,7 @@ Ten pakiet zawiera statyczną wersję biblioteki BrlAPI.
 Summary:	BrlAPI documentation
 Summary(pl.UTF-8):	Documentacja BrlAPI
 Group:		Documentation
-%if "%{_rpmversion}" >= "5"
 BuildArch:	noarch
-%endif
 
 %description -n brlapi-apidocs
 Documentation for BrlAPI in HTML format generated from brltty sources
