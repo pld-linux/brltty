@@ -322,7 +322,7 @@ cd Bindings/Python
 cd ../..
 %endif
 
-%if %{_lib} != "lib"
+%if "%{_lib}" != "lib"
 	# Fix java plugin install path on 64-bit archs
 	install -d $RPM_BUILD_ROOT%{_libdir}/java
 	%{__mv} $RPM_BUILD_ROOT%{_prefix}/{lib,%{_lib}}/java/libbrlapi_java.so
