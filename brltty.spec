@@ -468,7 +468,7 @@ new="${file}.rpmnew"
 %if %{with x}
 # gdm autostart - subpackage?
 #%{_datadir}/gdm/greeter/autostart/xbrlapi.desktop
-#/etc/X11/Xsession.d/60xbrlapi
+#/etc/X11/Xsession.d/90xbrlapi
 %{_datadir}/metainfo/org.a11y.brltty.metainfo.xml
 %endif
 %{_datadir}/polkit-1/actions/org.a11y.brlapi.policy
