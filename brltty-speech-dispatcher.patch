@@ -1,6 +1,19 @@
---- brltty-4.5/configure.ac.orig	2013-03-27 23:54:58.000000000 +0100
-+++ brltty-4.5/configure.ac	2013-04-07 19:04:31.636980920 +0200
-@@ -1516,7 +1516,7 @@
+diff -urNp -x '*.orig' brltty-6.1.org/Drivers/Speech/SpeechDispatcher/speech.c brltty-6.1/Drivers/Speech/SpeechDispatcher/speech.c
+--- brltty-6.1.org/Drivers/Speech/SpeechDispatcher/speech.c	2020-04-05 12:35:34.000000000 +0200
++++ brltty-6.1/Drivers/Speech/SpeechDispatcher/speech.c	2021-03-02 22:36:22.260141892 +0100
+@@ -34,7 +34,7 @@ typedef enum {
+ 
+ #include "spk_driver.h"
+ 
+-#include <libspeechd.h>
++#include <speech-dispatcher/libspeechd.h>
+ 
+ static SPDConnection *connectionHandle = NULL;
+ static const char *moduleName;
+diff -urNp -x '*.orig' brltty-6.1.org/configure.ac brltty-6.1/configure.ac
+--- brltty-6.1.org/configure.ac	2020-04-06 10:12:58.000000000 +0200
++++ brltty-6.1/configure.ac	2021-03-02 22:36:22.260141892 +0100
+@@ -1847,7 +1847,7 @@ BRLTTY_ARG_DISABLE(
        ])
     ])
  
@@ -9,16 +22,3 @@
        BRLTTY_SPEECH_DRIVER([sd], [SpeechDispatcher])
     ], [include], [lib], [speechd])
  
-    BRLTTY_IF_PACKAGE([Swift], [swift], [include/swift.h], [dnl
-       BRLTTY_SPEECH_DRIVER([sw], [Swift], [-L$(SWIFT_ROOT)/lib -lswift -lm])
---- brltty-4.5/Drivers/Speech/SpeechDispatcher/speech.c.orig	2013-03-27 23:51:36.000000000 +0100
-+++ brltty-4.5/Drivers/Speech/SpeechDispatcher/speech.c	2013-04-07 19:56:47.340248894 +0200
-@@ -38,7 +38,7 @@
- #define SPK_HAVE_PUNCTUATION
- #include "spk_driver.h"
- 
--#include <libspeechd.h>
-+#include <speech-dispatcher/libspeechd.h>
- 
- static SPDConnection *connectionHandle = NULL;
- static const char *moduleName;
