@@ -1,3 +1,4 @@
+# TODO: user/group (see Autostart/Systemd/sysusers)
 #
 # Conditional build:
 %bcond_without	apidocs			# documentation generated with doxygen
@@ -21,18 +22,17 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.8.0
+%define		brlapi_ver	0.8.3
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	6.1
-Release:	8
+Version:	6.4
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	ddcdd8c093f94c68885a39508af08d92
+# Source0-md5:	6400b2b6cb8bbbb31d850a24903ddb67
 Patch1:		%{name}-speech-dispatcher.patch
-Patch2:		%{name}-python.patch
 Patch4:		%{name}-glibc25.patch
 URL:		http://mielke.cc/brltty/
 BuildRequires:	alsa-lib-devel
@@ -69,7 +69,7 @@ BuildRequires:	polkit-devel
 BuildRequires:	rpmbuild(macros) >= 1.714
 BuildRequires:	sed >= 4.0
 %{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel >= 0.8}
-BuildRequires:	systemd-devel
+BuildRequires:	systemd-devel >= 1:209
 BuildRequires:	tar >= 1:1.22
 %{?with_tcl:BuildRequires:	tcl-devel >= 8.5}
 %if %{with x}
@@ -101,6 +101,19 @@ odświeżaniem (refreshable Braille display). BRLTTY steruje
 wyświetlaczem Braille'a i dostarcza funkcjonalność całkowitego
 przeglądu ekranu. Do tego pakietu została włączona możliwość syntezy
 mowy.
+
+%package -n dracut-brltty
+Summary:	Braille support for Dracut
+Summary(pl.UTF-8):	Obsługa Braille'a dla Dracuta
+Group:		Applications/Text
+Requires:	%{name} = %{version}-%{release}
+Requires:	dracut
+
+%description -n dracut-brltty
+Braille support for Dracut.
+
+%description -n dracut-brltty -l pl.UTF-8
+Obsługa Braille'a dla Dracuta.
 
 %package -n brlapi
 Summary:	Application Programming Interface for BRLTTY
@@ -260,7 +273,7 @@ Biblioteka BrlAPI dla Tcl.
 %prep
 %setup -q
 %patch1 -p1
-%patch2 -p1
+#patch2 -p1
 %patch4 -p1
 
 %{__sed} -i -e '1s,/usr/bin/python$,%{__python},' Tables/Contraction/latex-access.ctb
@@ -303,8 +316,9 @@ cd ../..
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT/var/lib/brltty
 
-%{__make} -j1 install install-appstream \
+%{__make} -j1 install install-appstream install-dracut install-polkit install-systemd install-udev \
 	OCAML_INSTALL_TARGET=install-without-findlib
 
 # findlib-specific, useless in rpm
@@ -331,14 +345,12 @@ cd ../..
 install Bootdisks/bp2cf $RPM_BUILD_ROOT%{_bindir}/brltty-bp2cf
 cp -p Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
 
-install -d $RPM_BUILD_ROOT%{systemdtmpfilesdir}
-cat >$RPM_BUILD_ROOT%{systemdtmpfilesdir}/brltty.conf <<EOF
-d /var/run/brltty 0755 root root -
-EOF
-
 # no sign in source wheter it is zh_CN or zh_TW
 # but seems to contain Traditional Chinese characters
 %{__mv} $RPM_BUILD_ROOT%{_localedir}/{zh,zh_TW}
+
+# packaged as %doc
+%{__rm} $RPM_BUILD_ROOT%{_prefix}/lib/dracut/modules.d/99brltty/README
 
 %find_lang %{name}
 
@@ -379,14 +391,18 @@ new="${file}.rpmnew"
 %attr(755,root,root) %{_bindir}/brltty
 %attr(755,root,root) %{_bindir}/brltty-atb
 %attr(755,root,root) %{_bindir}/brltty-bp2cf
-%attr(755,root,root) %{_bindir}/brltty-config
+%{_bindir}/brltty-config.sh
 %attr(755,root,root) %{_bindir}/brltty-clip
 %attr(755,root,root) %{_bindir}/brltty-cldr
 %attr(755,root,root) %{_bindir}/brltty-ctb
+%attr(755,root,root) %{_bindir}/brltty-genkey
 %attr(755,root,root) %{_bindir}/brltty-ktb
 %attr(755,root,root) %{_bindir}/brltty-lscmds
 %attr(755,root,root) %{_bindir}/brltty-lsinc
+%attr(755,root,root) %{_bindir}/brltty-mkuser
 %attr(755,root,root) %{_bindir}/brltty-morse
+%{_bindir}/brltty-prologue.sh
+%attr(755,root,root) %{_bindir}/brltty-setcaps
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
 %attr(755,root,root) %{_bindir}/brltty-tune
@@ -409,6 +425,7 @@ new="${file}.rpmnew"
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcn.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybfa.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhd.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
@@ -455,11 +472,25 @@ new="${file}.rpmnew"
 %{?with_at_spi:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so}
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxlx.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
+%if "%{_libexecdir}" != "%{_libdir}"
+%dir %{_libexecdir}/brltty
+%endif
+%attr(755,root,root) %{_libexecdir}/brltty/systemd-wrapper
+%attr(755,root,root) %{_libexecdir}/brltty/udev-wrapper
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
+/lib/udev/rules.d/90-brltty-device.rules
+/lib/udev/rules.d/90-brltty-uinput.rules
+%{systemdunitdir}/brltty.path
+%{systemdunitdir}/brltty@.path
+%{systemdunitdir}/brltty@.service
+%{systemdunitdir}/brltty-device@.service
 %{systemdtmpfilesdir}/brltty.conf
+#%{_prefix}/lib/sysusers.d/brltty.conf
+#%attr(3777,brltty,brltty)
 %dir /var/lib/BrlAPI
-%dir /var/run/brltty
+#%attr(2770,brltty,brltty)
+%dir /var/lib/brltty
 %{_mandir}/man1/brltty.1*
 %{_mandir}/man1/eutp.1*
 %{_mandir}/man1/vstp.1*
@@ -472,6 +503,21 @@ new="${file}.rpmnew"
 %{_datadir}/metainfo/org.a11y.brltty.metainfo.xml
 %endif
 %{_datadir}/polkit-1/actions/org.a11y.brlapi.policy
+%{_datadir}/polkit-1/rules.d/org.a11y.brlapi.rules
+
+%files -n dracut-brltty
+%defattr(644,root,root,755)
+%doc Initramfs/Dracut/README
+%dir %{_prefix}/lib/dracut/modules.d/99brltty
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/alsa-start.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/bluetooth-start.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/brltty-start.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/brltty-stop.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/dbus-start.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/module-setup.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/pulse-start.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/pulse-stop.sh
+%attr(755,root,root) %{_prefix}/lib/dracut/modules.d/99brltty/speechd-start.sh
 
 %files -n brlapi
 %defattr(644,root,root,755)
@@ -484,6 +530,7 @@ new="${file}.rpmnew"
 %attr(755,root,root) %{_libdir}/libbrlapi.so
 %{_includedir}/brltty
 %{_includedir}/brlapi*.h
+%{_pkgconfigdir}/brltty.pc
 %{_mandir}/man3/brlapi_*.3*
 
 %files -n brlapi-static
