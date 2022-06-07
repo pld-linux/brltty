@@ -64,6 +64,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel
 %{?with_python:BuildRequires:	python-Cython}
 %{?with_python3:BuildRequires:	python3-Cython}
+BuildRequires:	rpm-build >= 4.6
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
 BuildRequires:	rpmbuild(macros) >= 1.714
