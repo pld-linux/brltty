@@ -298,6 +298,7 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 	%{!?with_python:--disable-python-bindings} \
 	%{!?with_tcl:--disable-tcl-bindings} \
 	%{!?with_x:--disable-x} \
+	--with-speech-driver="-vv" \
 	--enable-api
 
 %{__make} -j1
