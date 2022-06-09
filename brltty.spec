@@ -3,6 +3,7 @@
 # Conditional build:
 %bcond_without	apidocs			# documentation generated with doxygen
 %bcond_without	java			# Java bindings
+%bcond_without	lua			# Lua bindings
 %bcond_without	ocaml			# OCaml bindings
 %bcond_without	python			# Python bindings
 %bcond_without	python3			# Python 3.x bindings
@@ -22,16 +23,16 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.8.3
+%define		brlapi_ver	0.8.4
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	6.4
-Release:	5
+Version:	6.5
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	6400b2b6cb8bbbb31d850a24903ddb67
+# Source0-md5:	d9a045a139edd179fe9d3caf088c06ad
 Patch1:		%{name}-speech-dispatcher.patch
 Patch4:		%{name}-glibc25.patch
 URL:		http://mielke.cc/brltty/
@@ -57,6 +58,7 @@ BuildRequires:	gettext-tools
 %{?with_libbraille:BuildRequires:	libbraille-devel}
 BuildRequires:	libicu-devel
 %{?with_liblouis:BuildRequires:	liblouis-devel}
+%{?with_lua:BuildRequires:	lua-devel}
 BuildRequires:	ncurses-devel
 %{?with_ocaml:BuildRequires:	ocaml}
 BuildRequires:	pcre2-32-devel
@@ -204,6 +206,19 @@ BrlAPI library for Java.
 %description -n java-brlapi -l pl.UTF-8
 Biblioteka BrlAPI dla Javy.
 
+%package -n lua-brlapi
+Summary:	BrlAPI library for Lua
+Summary(pl.UTF-8):	Biblioteka BrlAPI dla Lua
+License:	LGPL v2.1+
+Group:		Libraries
+Requires:	brlapi = %{version}-%{release}
+
+%description -n lua-brlapi
+BrlAPI library for Lua.
+
+%description -n lua-brlapi -l pl.UTF-8
+Biblioteka BrlAPI dla Lua.
+
 %package -n ocaml-brlapi
 Summary:	OCaml binding for BrlAPI
 Summary(pl.UTF-8):	Wiązania OCamla do BrlAPI
@@ -274,7 +289,6 @@ Biblioteka BrlAPI dla Tcl.
 %prep
 %setup -q
 %patch1 -p1
-#patch2 -p1
 %patch4 -p1
 
 %{__sed} -i -e '1s,/usr/bin/python$,%{__python},' Tables/Contraction/latex-access.ctb
@@ -296,6 +310,7 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 	%{!?with_java:--disable-java-bindings} \
 	%{!?with_liblouis:--disable-liblouis} \
 	--enable-lisp-bindings \
+	%{!?with_lua:--disable-lua-bindings} \
 	%{!?with_python:--disable-python-bindings} \
 	%{!?with_tcl:--disable-tcl-bindings} \
 	%{!?with_x:--disable-x} \
@@ -321,7 +336,8 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/var/lib/brltty
 
 %{__make} -j1 install install-appstream install-dracut install-polkit install-systemd install-udev \
-	OCAML_INSTALL_TARGET=install-without-findlib
+	OCAML_INSTALL_TARGET=install-without-findlib \
+	UDEV_PARENT_LOCATION=/lib
 
 # findlib-specific, useless in rpm
 %{__rm} $RPM_BUILD_ROOT%{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so.owner
@@ -398,15 +414,20 @@ new="${file}.rpmnew"
 %attr(755,root,root) %{_bindir}/brltty-cldr
 %attr(755,root,root) %{_bindir}/brltty-ctb
 %attr(755,root,root) %{_bindir}/brltty-genkey
+%attr(755,root,root) %{_bindir}/brltty-hid
 %attr(755,root,root) %{_bindir}/brltty-ktb
 %attr(755,root,root) %{_bindir}/brltty-lscmds
 %attr(755,root,root) %{_bindir}/brltty-lsinc
 %attr(755,root,root) %{_bindir}/brltty-mkuser
 %attr(755,root,root) %{_bindir}/brltty-morse
+%{_bindir}/brltty-prologue.bash
+%{_bindir}/brltty-prologue.lua
 %{_bindir}/brltty-prologue.sh
+%{_bindir}/brltty-prologue.tcl
 %attr(755,root,root) %{_bindir}/brltty-setcaps
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
+%attr(755,root,root) %{_bindir}/brltty-ttysize
 %attr(755,root,root) %{_bindir}/brltty-tune
 %attr(755,root,root) %{_bindir}/eutp
 %attr(755,root,root) %{_bindir}/vstp
@@ -481,8 +502,10 @@ new="${file}.rpmnew"
 %attr(755,root,root) %{_libexecdir}/brltty/udev-wrapper
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
-/lib/udev/rules.d/90-brltty-device.rules
+/lib/udev/rules.d/90-brltty-hid.rules
 /lib/udev/rules.d/90-brltty-uinput.rules
+/lib/udev/rules.d/90-brltty-usb-customized.rules
+/lib/udev/rules.d/90-brltty-usb-generic.rules
 %{systemdunitdir}/brltty.path
 %{systemdunitdir}/brltty@.path
 %{systemdunitdir}/brltty@.service
@@ -550,6 +573,12 @@ new="${file}.rpmnew"
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/java/libbrlapi_java.so
 %{_javadir}/brlapi.jar
+%endif
+
+%if %{with lua}
+%files -n lua-brlapi
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/lua/*.*/brlapi.so
 %endif
 
 %if %{with ocaml}
