@@ -24,11 +24,14 @@
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
 %define		brlapi_ver	0.8.4
+
+%{?with_java:%{?use_default_jdk}}
+
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	6.5
-Release:	3
+Release:	4
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
@@ -53,7 +56,7 @@ BuildRequires:	expat-devel
 BuildRequires:	gettext-tools
 %{?with_at_spi2:BuildRequires:	glib2-devel >= 2.0}
 %{?with_gpm:BuildRequires:	gpm-devel}
-%{?with_java:BuildRequires:	jdk}
+%{?with_java:%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:	jdk}}
 %{?with_java:BuildRequires:	jpackage-utils}
 %{?with_libbraille:BuildRequires:	libbraille-devel}
 BuildRequires:	libicu-devel
@@ -69,7 +72,7 @@ BuildRequires:	polkit-devel
 BuildRequires:	rpm-build >= 4.6
 %{?with_java:BuildRequires:	rpm-javaprov}
 %{?with_python:BuildRequires:	rpm-pythonprov}
-BuildRequires:	rpmbuild(macros) >= 1.714
+BuildRequires:	rpmbuild(macros) >= 2.021
 BuildRequires:	sed >= 4.0
 %{?with_speech_dispatcher:BuildRequires:	speech-dispatcher-devel >= 0.8}
 BuildRequires:	systemd-devel >= 1:209
