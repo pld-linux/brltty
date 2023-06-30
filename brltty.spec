@@ -67,7 +67,9 @@ BuildRequires:	ncurses-devel
 BuildRequires:	pcre2-32-devel
 BuildRequires:	pkgconfig
 BuildRequires:	polkit-devel
+%{?with_ptyhon:BuildRequires:	python}
 %{?with_python:BuildRequires:	python-Cython}
+%{?with_python3:BuildRequires:	python3}
 %{?with_python3:BuildRequires:	python3-Cython}
 BuildRequires:	rpm-build >= 4.6
 %{?with_java:BuildRequires:	rpm-javaprov}
