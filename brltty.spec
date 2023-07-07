@@ -56,7 +56,7 @@ BuildRequires:	expat-devel
 BuildRequires:	gettext-tools
 %{?with_at_spi2:BuildRequires:	glib2-devel >= 2.0}
 %{?with_gpm:BuildRequires:	gpm-devel}
-%{?with_java:%{?use_jdk:%buildrequires_jdk}%{!?use_jdk:BuildRequires:	jdk}}
+%{?with_java:%buildrequires_jdk}
 %{?with_java:BuildRequires:	jpackage-utils}
 %{?with_libbraille:BuildRequires:	libbraille-devel}
 BuildRequires:	libicu-devel
