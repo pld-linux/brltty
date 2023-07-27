@@ -23,19 +23,19 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.8.4
+%define		brlapi_ver	0.8.5
 
 %{?with_java:%{?use_default_jdk}}
 
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	6.5
-Release:	4
+Version:	6.6
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	http://mielke.cc/brltty/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	d9a045a139edd179fe9d3caf088c06ad
+# Source0-md5:	ad3fd352481a7720d2b2fdf9ae64cf79
 Patch1:		%{name}-speech-dispatcher.patch
 Patch4:		%{name}-glibc25.patch
 URL:		http://mielke.cc/brltty/
@@ -297,6 +297,7 @@ Biblioteka BrlAPI dla Tcl.
 %patch4 -p1
 
 %{__sed} -i -e '1s,/usr/bin/python$,%{__python},' Tables/Contraction/latex-access.ctb
+%{__sed} -i -e '1s,/usr/bin/env bash,/bin/bash,' brltty-term brltty-ttysize
 
 %build
 %{__aclocal} -I m4
@@ -430,6 +431,7 @@ new="${file}.rpmnew"
 %{_bindir}/brltty-prologue.sh
 %{_bindir}/brltty-prologue.tcl
 %attr(755,root,root) %{_bindir}/brltty-setcaps
+%attr(755,root,root) %{_bindir}/brltty-term
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
 %attr(755,root,root) %{_bindir}/brltty-ttysize
@@ -451,6 +453,7 @@ new="${file}.rpmnew"
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybce.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybcn.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttybdp.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttybfa.so
@@ -498,11 +501,14 @@ new="${file}.rpmnew"
 # screen drivers
 %{?with_at_spi2:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so}
 %{?with_at_spi:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so}
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyxem.so
+%attr(755,root,root) %{_libdir}/brltty/libbrlttyxfv.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxlx.so
 %attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
 %if "%{_libexecdir}" != "%{_libdir}"
 %dir %{_libexecdir}/brltty
 %endif
+%attr(755,root,root) %{_libexecdir}/brltty/brltty-pty
 %attr(755,root,root) %{_libexecdir}/brltty/systemd-wrapper
 %attr(755,root,root) %{_libexecdir}/brltty/udev-wrapper
 %{_sysconfdir}/brltty
