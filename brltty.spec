@@ -1,4 +1,3 @@
-# TODO: user/group (see Autostart/Systemd/sysusers)
 #
 # Conditional build:
 %bcond_without	apidocs			# documentation generated with doxygen
@@ -31,11 +30,12 @@ Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
 Version:	6.7
-Release:	1
+Release:	2
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	https://brltty.app/archive/%{name}-%{version}.tar.xz
 # Source0-md5:	42298348d3703c7140b88020a36c8c65
+Patch0:		%{name}-sysusers.patch
 Patch1:		%{name}-speech-dispatcher.patch
 Patch4:		%{name}-glibc25.patch
 URL:		https://brltty.app/
@@ -93,6 +93,15 @@ BuildRequires:	xorg-lib-libXtst-devel
 #%{?with_theta:BuildRequires:	Theta-devel (-ltheta <theta.h>)}
 #%{?with_viavoice:BuildRequires:	ViaVoice-devel (-libmeci50 <eci.h>)}
 BuildRequires:	xz
+Requires(pre):	/bin/id
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
+Provides:	group(brlapi)
+Provides:	group(brltty)
+Provides:	user(brltty)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -293,6 +302,7 @@ Biblioteka BrlAPI dla Tcl.
 
 %prep
 %setup -q
+%patch0 -p1
 %patch1 -p1
 %patch4 -p1
 
@@ -382,7 +392,17 @@ cp -p Documents/brltty.conf $RPM_BUILD_ROOT%{_sysconfdir}
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-# The pre-install scriptlet.
+%groupadd -g 348 brlapi
+%groupadd -g 351 brltty
+# supplementary groups:
+# - tty for reading screen content (/dev/vcs*) and virutal console monitoring and control (/dev/tty*)
+# - dialout for serial devices I/O (/dev/ttyS*)
+# - usb for USB devices I/O
+# - audio for playing sound via ALSA framework
+# - pulse-access for playing sound via Pulse Audio daemon (TODO: requires pulseaudio installed earlier)
+# - input for monitoring keyboard input (/dev/input/*)
+# - ? (TODO) for creating virtual devices (/dev/uinput)
+%useradd -u 351 -d /var/lib/brltty -s /bin/false -c "Braille Device Daemon" -g brltty -G audio,brlapi,dialout,input,tty,usb brltty
 
 # If a configuration file already exists then rpm installs the new one as
 # <path>.rpmnew. If this is done then the .rpmnew file is overwritten if it
@@ -405,6 +425,13 @@ new="${file}.rpmnew"
 
 # Update the configuration file template via the Bootdisks/bp2cf script.
 %{_bindir}/brltty-bp2cf -u -f "${file}" >/dev/null 2>&1 || :
+
+%postun
+if [ "$1" = "0" ]; then
+	%userremove brltty
+	%groupremove brlapi
+	%groupremove brltty
+fi
 
 %post	-n brlapi -p /sbin/ldconfig
 %postun	-n brlapi -p /sbin/ldconfig
@@ -522,11 +549,9 @@ new="${file}.rpmnew"
 %{systemdunitdir}/brltty@.service
 %{systemdunitdir}/brltty-device@.service
 %{systemdtmpfilesdir}/brltty.conf
-#%{_prefix}/lib/sysusers.d/brltty.conf
-#%attr(3777,brltty,brltty)
-%dir /var/lib/BrlAPI
-#%attr(2770,brltty,brltty)
-%dir /var/lib/brltty
+/usr/lib/sysusers.d/brltty.conf
+%attr(3777,brltty,brltty) %dir /var/lib/BrlAPI
+%attr(2770,brltty,brltty) %dir /var/lib/brltty
 %{_mandir}/man1/brltty.1*
 %{_mandir}/man1/eutp.1*
 %{_mandir}/man1/vstp.1*

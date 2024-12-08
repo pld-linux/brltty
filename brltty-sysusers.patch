@@ -1,0 +1,27 @@
+--- brltty-6.7/Autostart/Systemd/sysusers.orig	2024-09-29 00:44:24.000000000 +0200
++++ brltty-6.7/Autostart/Systemd/sysusers	2024-12-08 11:58:06.522821001 +0100
+@@ -27,12 +27,10 @@ u brltty - "Braille Device Daemon" /var/
+ m brltty tty
+ 
+ # for serial I/O (/dev/ttyS<n>)
+-# probably only one of these should be uncommented
+ m brltty dialout
+-#m brltty uucp
+ 
+ # for USB I/o (/dev/bus/usb/*/*)
+-m brltty root
++m brltty usb
+ 
+ # for playing sound via the ALSA framework
+ m brltty audio
+@@ -43,8 +41,8 @@ m brltty pulse-access
+ # for monitoring keyboard input (/dev/input/*)
+ m brltty input
+ 
+-# for creating virtual devices (/dev/uinput)
+-m brltty root
++# for creating virtual devices (/dev/uinput) - FIXME
++#m brltty root
+ 
+ # for reading the BrlAPI authorization key file
+ g brlapi
