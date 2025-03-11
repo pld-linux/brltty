@@ -302,9 +302,9 @@ Biblioteka BrlAPI dla Tcl.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
-%patch4 -p1
+%patch -P 0 -p1
+%patch -P 1 -p1
+%patch -P 4 -p1
 
 %{__sed} -i -e '1s,/usr/bin/python$,%{__python},' Tables/Contraction/latex-access.ctb
 %{__sed} -i -e '1s,/usr/bin/env bash,/bin/bash,' brltty-term brltty-ttysize
