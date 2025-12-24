@@ -22,19 +22,19 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.8.6
+%define		brlapi_ver	0.8.7
 
 %{?with_java:%{?use_default_jdk}}
 
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	6.7
-Release:	4
+Version:	6.8
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	https://brltty.app/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	42298348d3703c7140b88020a36c8c65
+# Source0-md5:	3c50a92e452d06a9c96d20a898a3eddb
 Patch0:		%{name}-sysusers.patch
 Patch1:		%{name}-speech-dispatcher.patch
 Patch4:		%{name}-glibc25.patch
@@ -337,12 +337,20 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 
 %if %{with python}
 cd Bindings/Python
+%{__rm} brlapi.auto.c
+%{__make} brlapi.auto.c \
+	CYTHON=cython2 \
+	PYTHON_VERSION=2
 %py_build
 cd ../..
 %endif
 
 %if %{with python3}
 cd Bindings/Python
+%{__rm} brlapi.auto.c
+%{__make} brlapi.auto.c \
+	CYTHON=cython3 \
+	PYTHON_VERSION=3
 %py3_build
 cd ../..
 %endif
@@ -360,6 +368,9 @@ install -d $RPM_BUILD_ROOT/var/lib/brltty
 
 %if %{with python}
 cd Bindings/Python
+# avoid recompiling from cython3-generated source
+touch build-2/temp.*/*.o
+touch build-2/lib.*/*.so
 %py_install
 cd ../..
 %endif
