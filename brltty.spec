@@ -22,19 +22,19 @@
 %bcond_with	at_spi			# AtSpi screen driver
 %bcond_without	at_spi2			# AtSpi2 screen driver
 
-%define		brlapi_ver	0.8.7
+%define		brlapi_ver	0.8.8
 
 %{?with_java:%{?use_default_jdk}}
 
 Summary:	Braille display driver for Linux/Unix
 Summary(pl.UTF-8):	Sterownik do wyświetlaczy Braille'a
 Name:		brltty
-Version:	6.8
-Release:	3
+Version:	6.9.1
+Release:	1
 License:	GPL v2+ (brltty and drivers), LGPL v2.1+ (APIs)
 Group:		Daemons
 Source0:	https://brltty.app/archive/%{name}-%{version}.tar.xz
-# Source0-md5:	3c50a92e452d06a9c96d20a898a3eddb
+# Source0-md5:	cf461e21fe30a2433b20e96f8dc81f7a
 Patch0:		%{name}-sysusers.patch
 Patch1:		%{name}-speech-dispatcher.patch
 Patch4:		%{name}-glibc25.patch
@@ -307,7 +307,7 @@ Biblioteka BrlAPI dla Tcl.
 %patch -P 4 -p1
 
 %{__sed} -i -e '1s,/usr/bin/python$,%{__python},' Tables/Contraction/latex-access.ctb
-%{__sed} -i -e '1s,/usr/bin/env bash,/bin/bash,' brltty-term brltty-ttysize
+%{__sed} -i -e '1s,/usr/bin/env bash,/bin/bash,' brltty-term brltty-tmux brltty-ttysize
 
 %build
 %{__aclocal} -I m4
@@ -315,6 +315,7 @@ Biblioteka BrlAPI dla Tcl.
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure \
 	%{?with_java:JAVA_HOME=%{java_home}} \
+	PYTHON=%{__python3} \
 	--with-install-root="$RPM_BUILD_ROOT" \
 	%{!?with_libbraille:--without-libbraille} \
 	%{!?with_espeak:--without-espeak} \
@@ -333,7 +334,10 @@ CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 	--with-speech-driver="-vv" \
 	--enable-api
 
-%{__make} -j1
+# autoconf started to add -std=gnu$latest to CC, which is not accepted by ocaml bindings build
+# (and redundant, as brltty overrides it with -std=gnu99 in CFLAGS)
+%{__make} -j1 \
+	CC="%{__cc}"
 
 %if %{with python}
 cd Bindings/Python
@@ -456,11 +460,11 @@ fi
 %{_bindir}/brltty-config.sh
 %attr(755,root,root) %{_bindir}/brltty-clip
 %attr(755,root,root) %{_bindir}/brltty-cldr
+%attr(755,root,root) %{_bindir}/brltty-cmdref
 %attr(755,root,root) %{_bindir}/brltty-ctb
 %attr(755,root,root) %{_bindir}/brltty-genkey
 %attr(755,root,root) %{_bindir}/brltty-hid
 %attr(755,root,root) %{_bindir}/brltty-ktb
-%attr(755,root,root) %{_bindir}/brltty-lscmds
 %attr(755,root,root) %{_bindir}/brltty-lsinc
 %attr(755,root,root) %{_bindir}/brltty-mkuser
 %attr(755,root,root) %{_bindir}/brltty-morse
@@ -470,79 +474,106 @@ fi
 %{_bindir}/brltty-prologue.tcl
 %attr(755,root,root) %{_bindir}/brltty-setcaps
 %attr(755,root,root) %{_bindir}/brltty-term
+%attr(755,root,root) %{_bindir}/brltty-tmux
 %attr(755,root,root) %{_bindir}/brltty-trtxt
 %attr(755,root,root) %{_bindir}/brltty-ttb
 %attr(755,root,root) %{_bindir}/brltty-ttysize
 %attr(755,root,root) %{_bindir}/brltty-tune
 %attr(755,root,root) %{_bindir}/eutp
 %attr(755,root,root) %{_bindir}/vstp
-%{?with_x:%attr(755,root,root) %{_bindir}/xbrlapi}
+%if %{with x}
+%attr(755,root,root) %{_bindir}/xbrlapi
+%endif
 %dir %{_libdir}/brltty
 # Braille drivers
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybal.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybat.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybba.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybbc.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybbd.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybbg.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybbl.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybbm.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybbn.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybcb.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybce.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybcn.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybdp.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybec.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybeu.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybfa.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybfs.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybhd.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybhm.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybht.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybhw.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybic.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybir.so
-%{?with_libbraille:%attr(755,root,root) %{_libdir}/brltty/libbrlttyblb.so}
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyblt.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybmb.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybmd.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybmm.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybmn.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybmt.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybnp.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybpg.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybpm.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybsk.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybtn.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybts.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybtt.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybvd.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybvo.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybvr.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttybvs.so
-%{?with_x:%attr(755,root,root) %{_libdir}/brltty/libbrlttybxw.so}
+%{_libdir}/brltty/libbrlttybal.so
+%{_libdir}/brltty/libbrlttybat.so
+%{_libdir}/brltty/libbrlttybba.so
+%{_libdir}/brltty/libbrlttybbc.so
+%{_libdir}/brltty/libbrlttybbd.so
+%{_libdir}/brltty/libbrlttybbg.so
+%{_libdir}/brltty/libbrlttybbl.so
+%{_libdir}/brltty/libbrlttybbm.so
+%{_libdir}/brltty/libbrlttybbn.so
+%{_libdir}/brltty/libbrlttybcb.so
+%{_libdir}/brltty/libbrlttybce.so
+%{_libdir}/brltty/libbrlttybcn.so
+%{_libdir}/brltty/libbrlttybdp.so
+%{_libdir}/brltty/libbrlttybec.so
+%{_libdir}/brltty/libbrlttybeu.so
+%{_libdir}/brltty/libbrlttybfa.so
+%{_libdir}/brltty/libbrlttybfs.so
+%{_libdir}/brltty/libbrlttybhd.so
+%{_libdir}/brltty/libbrlttybhm.so
+%{_libdir}/brltty/libbrlttybht.so
+%{_libdir}/brltty/libbrlttybhw.so
+%{_libdir}/brltty/libbrlttybic.so
+%{_libdir}/brltty/libbrlttybir.so
+%if %{with libbraille}
+%{_libdir}/brltty/libbrlttyblb.so
+%endif
+%{_libdir}/brltty/libbrlttyblt.so
+%{_libdir}/brltty/libbrlttybmb.so
+%{_libdir}/brltty/libbrlttybmd.so
+%{_libdir}/brltty/libbrlttybmm.so
+%{_libdir}/brltty/libbrlttybmn.so
+%{_libdir}/brltty/libbrlttybmt.so
+%{_libdir}/brltty/libbrlttybnp.so
+%{_libdir}/brltty/libbrlttybpg.so
+%{_libdir}/brltty/libbrlttybpm.so
+%{_libdir}/brltty/libbrlttybsk.so
+%{_libdir}/brltty/libbrlttybtn.so
+%{_libdir}/brltty/libbrlttybts.so
+%{_libdir}/brltty/libbrlttybtt.so
+%{_libdir}/brltty/libbrlttybvd.so
+%{_libdir}/brltty/libbrlttybvo.so
+%{_libdir}/brltty/libbrlttybvs.so
+%if %{with x}
+%{_libdir}/brltty/libbrlttybxw.so
+%endif
 # speech synthesizer drivers
-%attr(755,root,root) %{_libdir}/brltty/libbrlttysal.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttysbl.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyscb.so
-%{?with_espeak_ng:%attr(755,root,root) %{_libdir}/brltty/libbrlttysen.so}
-%{?with_espeak:%attr(755,root,root) %{_libdir}/brltty/libbrlttyses.so}
-%{?with_flite:%attr(755,root,root) %{_libdir}/brltty/libbrlttysfl.so}
-%attr(755,root,root) %{_libdir}/brltty/libbrlttysfv.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttysgs.so
-%{?with_mikropuhe:%attr(755,root,root) %{_libdir}/brltty/libbrlttysmp.so}
-%{?with_speech_dispatcher:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssd.so}
-%{?with_swift:%attr(755,root,root) %{_libdir}/brltty/libbrlttyssw.so}
-%{?with_theta:%attr(755,root,root) %{_libdir}/brltty/libbrlttysth.so}
-%{?with_viavoice:%attr(755,root,root) %{_libdir}/brltty/libbrlttysvv.so}
-%attr(755,root,root) %{_libdir}/brltty/libbrlttysxs.so
+%{_libdir}/brltty/libbrlttysal.so
+%{_libdir}/brltty/libbrlttysbl.so
+%{_libdir}/brltty/libbrlttyscb.so
+%if %{with espeak_ng}
+%{_libdir}/brltty/libbrlttysen.so
+%endif
+%if %{with espeak}
+%{_libdir}/brltty/libbrlttyses.so
+%endif
+%if %{with flite}
+%{_libdir}/brltty/libbrlttysfl.so
+%endif
+%{_libdir}/brltty/libbrlttysfv.so
+%{_libdir}/brltty/libbrlttysgs.so
+%if %{with mukropuhe}
+%{_libdir}/brltty/libbrlttysmp.so
+%endif
+%if %{with speech_dispatcher}
+%{_libdir}/brltty/libbrlttyssd.so
+%endif
+%if %{with swift}
+%{_libdir}/brltty/libbrlttyssw.so
+%endif
+%if %{with theta}
+%{_libdir}/brltty/libbrlttysth.so
+%endif
+%if %{with viavoice}
+%{_libdir}/brltty/libbrlttysvv.so
+%endif
+%{_libdir}/brltty/libbrlttysxs.so
 # screen drivers
-%{?with_at_spi2:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxa2.so}
-%{?with_at_spi:%attr(755,root,root) %{_libdir}/brltty/libbrlttyxas.so}
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyxem.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyxfv.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyxlx.so
-%attr(755,root,root) %{_libdir}/brltty/libbrlttyxsc.so
+%if %{with at_spi2}
+%{_libdir}/brltty/libbrlttyxa2.so
+%endif
+%if %{with at_spi}
+%{_libdir}/brltty/libbrlttyxas.so
+%endif
+%{_libdir}/brltty/libbrlttyxem.so
+%{_libdir}/brltty/libbrlttyxfv.so
+%{_libdir}/brltty/libbrlttyxlx.so
+%{_libdir}/brltty/libbrlttyxsc.so
+%{_libdir}/brltty/libbrlttyxtx.so
 %if "%{_libexecdir}" != "%{_libdir}"
 %dir %{_libexecdir}/brltty
 %endif
@@ -551,6 +582,7 @@ fi
 %attr(755,root,root) %{_libexecdir}/brltty/udev-wrapper
 %{_sysconfdir}/brltty
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/brltty.conf
+/lib/udev/rules.d/90-brltty-beeper.rules
 /lib/udev/rules.d/90-brltty-hid.rules
 /lib/udev/rules.d/90-brltty-uinput.rules
 /lib/udev/rules.d/90-brltty-usb-customized.rules
@@ -566,7 +598,9 @@ fi
 %{_mandir}/man1/brltty.1*
 %{_mandir}/man1/eutp.1*
 %{_mandir}/man1/vstp.1*
-%{?with_x:%{_mandir}/man1/xbrlapi.1*}
+%if %{with x}
+%{_mandir}/man1/xbrlapi.1*
+%endif
 
 %if %{with x}
 # gdm autostart - subpackage?
@@ -593,13 +627,13 @@ fi
 
 %files -n brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libbrlapi.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libbrlapi.so.0.8
+%{_libdir}/libbrlapi.so.*.*.*
+%ghost %{_libdir}/libbrlapi.so.0.8
 
 %files -n brlapi-devel
 %defattr(644,root,root,755)
 %doc Documents/Manual-BrlAPI/English/BrlAPI*
-%attr(755,root,root) %{_libdir}/libbrlapi.so
+%{_libdir}/libbrlapi.so
 %{_includedir}/brltty
 %{_includedir}/brlapi*.h
 %{_pkgconfigdir}/brltty.pc
@@ -618,20 +652,20 @@ fi
 %if %{with java}
 %files -n java-brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/java/libbrlapi_java.so
+%{_libdir}/java/libbrlapi_java.so
 %{_javadir}/brlapi.jar
 %endif
 
 %if %{with lua}
 %files -n lua-brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lua/*.*/brlapi.so
+%{_libdir}/lua/*.*/brlapi.so
 %endif
 
 %if %{with ocaml}
 %files -n ocaml-brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so
+%{_libdir}/ocaml/stublibs/dllbrlapi_stubs.so
 
 %files -n ocaml-brlapi-devel
 %defattr(644,root,root,755)
@@ -645,13 +679,13 @@ fi
 %if %{with python}
 %files -n python-brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{py_sitedir}/brlapi.so
+%{py_sitedir}/brlapi.so
 %{py_sitedir}/Brlapi-%{brlapi_ver}-py*.egg-info
 
 %if %{with python3}
 %files -n python3-brlapi
 %defattr(644,root,root,755)
-%attr(755,root,root) %{py3_sitedir}/brlapi.cpython-*.so
+%{py3_sitedir}/brlapi.cpython-*.so
 %{py3_sitedir}/Brlapi-%{brlapi_ver}-py*.egg-info
 %endif
 %endif
@@ -660,6 +694,6 @@ fi
 %files -n brlapi-tcl
 %defattr(644,root,root,755)
 %dir %{_libdir}/brlapi-%{brlapi_ver}
-%attr(755,root,root) %{_libdir}/brlapi-%{brlapi_ver}/libbrlapi_tcl.so
+%{_libdir}/brlapi-%{brlapi_ver}/libbrlapi_tcl.so
 %{_libdir}/brlapi-%{brlapi_ver}/pkgIndex.tcl
 %endif
